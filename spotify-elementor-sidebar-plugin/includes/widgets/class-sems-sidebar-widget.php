@@ -31,6 +31,8 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
         $this->register_shortcut_controls();
         $this->register_footer_controls();
         $this->register_language_controls();
+        $this->register_toggle_controls();
+        $this->register_style_controls();
     }
 
     private function register_brand_controls(): void {
@@ -310,12 +312,475 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
         $this->end_controls_section();
     }
 
+    private function register_toggle_controls(): void {
+        $this->start_controls_section(
+            'section_toggle',
+            [
+                'label' => esc_html__('Menu Toggle', 'spotify-elementor-sidebar-menu'),
+                'tab' => \Elementor\Controls_Manager::TAB_CONTENT,
+            ]
+        );
+
+        $this->add_control(
+            'enable_menu_toggle',
+            [
+                'label' => esc_html__('Enable Toggle', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::SWITCHER,
+                'label_on' => esc_html__('Yes', 'spotify-elementor-sidebar-menu'),
+                'label_off' => esc_html__('No', 'spotify-elementor-sidebar-menu'),
+                'return_value' => 'yes',
+                'default' => 'yes',
+            ]
+        );
+
+        $this->add_control(
+            'collapsed_default',
+            [
+                'label' => esc_html__('Collapsed by Default', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::SWITCHER,
+                'label_on' => esc_html__('Yes', 'spotify-elementor-sidebar-menu'),
+                'label_off' => esc_html__('No', 'spotify-elementor-sidebar-menu'),
+                'return_value' => 'yes',
+                'default' => '',
+                'condition' => [
+                    'enable_menu_toggle' => 'yes',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'toggle_close_icon',
+            [
+                'label' => esc_html__('Close Icon', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::ICONS,
+                'default' => [
+                    'value' => 'eicon-close',
+                    'library' => 'eicons',
+                ],
+                'condition' => [
+                    'enable_menu_toggle' => 'yes',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'toggle_open_icon',
+            [
+                'label' => esc_html__('Open Icon', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::ICONS,
+                'default' => [
+                    'value' => 'eicon-menu-bar',
+                    'library' => 'eicons',
+                ],
+                'condition' => [
+                    'enable_menu_toggle' => 'yes',
+                ],
+            ]
+        );
+
+        $this->end_controls_section();
+    }
+
+    private function register_style_controls(): void {
+        $this->register_style_sidebar_controls();
+        $this->register_style_brand_controls();
+        $this->register_style_menu_controls();
+        $this->register_style_shortcuts_controls();
+        $this->register_style_footer_controls();
+        $this->register_style_language_controls();
+        $this->register_style_toggle_controls();
+    }
+
+    private function register_style_sidebar_controls(): void {
+        $this->start_controls_section(
+            'style_sidebar',
+            [
+                'label' => esc_html__('Sidebar', 'spotify-elementor-sidebar-menu'),
+                'tab' => \Elementor\Controls_Manager::TAB_STYLE,
+            ]
+        );
+
+        $this->add_control(
+            'sidebar_background_color',
+            [
+                'label' => esc_html__('Background Color', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .sems-sidebar' => 'background: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_responsive_control(
+            'sidebar_width',
+            [
+                'label' => esc_html__('Width', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::SLIDER,
+                'size_units' => ['px'],
+                'range' => ['px' => ['min' => 180, 'max' => 420]],
+                'selectors' => [
+                    '{{WRAPPER}} .sems-sidebar' => 'width: {{SIZE}}{{UNIT}};',
+                ],
+            ]
+        );
+
+        $this->add_responsive_control(
+            'sidebar_padding',
+            [
+                'label' => esc_html__('Inner Padding', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::DIMENSIONS,
+                'size_units' => ['px'],
+                'selectors' => [
+                    '{{WRAPPER}} .sems-sidebar__inner' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+                ],
+            ]
+        );
+
+        $this->end_controls_section();
+    }
+
+    private function register_style_brand_controls(): void {
+        $this->start_controls_section(
+            'style_brand',
+            [
+                'label' => esc_html__('Brand', 'spotify-elementor-sidebar-menu'),
+                'tab' => \Elementor\Controls_Manager::TAB_STYLE,
+            ]
+        );
+
+        $this->add_control(
+            'brand_text_color',
+            [
+                'label' => esc_html__('Text Color', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .sems-brand__text' => 'color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_group_control(
+            \Elementor\Group_Control_Typography::get_type(),
+            [
+                'name' => 'brand_typography',
+                'selector' => '{{WRAPPER}} .sems-brand__text',
+            ]
+        );
+
+        $this->add_responsive_control(
+            'brand_logo_size',
+            [
+                'label' => esc_html__('Logo Size', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::SLIDER,
+                'size_units' => ['px'],
+                'range' => ['px' => ['min' => 16, 'max' => 80]],
+                'selectors' => [
+                    '{{WRAPPER}} .sems-brand__icon' => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}};',
+                ],
+            ]
+        );
+
+        $this->end_controls_section();
+    }
+
+    private function register_style_menu_controls(): void {
+        $this->start_controls_section(
+            'style_main_menu',
+            [
+                'label' => esc_html__('Main Menu', 'spotify-elementor-sidebar-menu'),
+                'tab' => \Elementor\Controls_Manager::TAB_STYLE,
+            ]
+        );
+
+        $this->add_control(
+            'menu_item_color',
+            [
+                'label' => esc_html__('Item Color', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .sems-main-nav__item' => 'color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'menu_item_hover_color',
+            [
+                'label' => esc_html__('Hover Color', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .sems-main-nav__item:hover' => 'color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'menu_item_active_color',
+            [
+                'label' => esc_html__('Active Color', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .sems-main-nav__item.is-active' => 'color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_group_control(
+            \Elementor\Group_Control_Typography::get_type(),
+            [
+                'name' => 'menu_typography',
+                'selector' => '{{WRAPPER}} .sems-main-nav__item',
+            ]
+        );
+
+        $this->add_responsive_control(
+            'menu_icon_size',
+            [
+                'label' => esc_html__('Icon Size', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::SLIDER,
+                'size_units' => ['px'],
+                'range' => ['px' => ['min' => 10, 'max' => 40]],
+                'selectors' => [
+                    '{{WRAPPER}} .sems-main-nav .sems-icon svg' => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}};',
+                    '{{WRAPPER}} .sems-main-nav .sems-icon i' => 'font-size: {{SIZE}}{{UNIT}};',
+                ],
+            ]
+        );
+
+        $this->end_controls_section();
+    }
+
+    private function register_style_shortcuts_controls(): void {
+        $this->start_controls_section(
+            'style_shortcuts',
+            [
+                'label' => esc_html__('Shortcut Menu', 'spotify-elementor-sidebar-menu'),
+                'tab' => \Elementor\Controls_Manager::TAB_STYLE,
+            ]
+        );
+
+        $this->add_control(
+            'shortcut_text_color',
+            [
+                'label' => esc_html__('Text Color', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .sems-shortcuts__item' => 'color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'shortcut_hover_color',
+            [
+                'label' => esc_html__('Hover Color', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .sems-shortcuts__item:hover' => 'color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_group_control(
+            \Elementor\Group_Control_Typography::get_type(),
+            [
+                'name' => 'shortcut_typography',
+                'selector' => '{{WRAPPER}} .sems-shortcuts__item',
+            ]
+        );
+
+        $this->add_control(
+            'shortcut_badge_plus_bg',
+            [
+                'label' => esc_html__('Plus Badge Background', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .sems-square-icon--plus' => 'background: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'shortcut_badge_plus_color',
+            [
+                'label' => esc_html__('Plus Badge Icon Color', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .sems-square-icon--plus' => 'color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'shortcut_badge_liked_color',
+            [
+                'label' => esc_html__('Liked Badge Icon Color', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .sems-square-icon--liked' => 'color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->end_controls_section();
+    }
+
+    private function register_style_footer_controls(): void {
+        $this->start_controls_section(
+            'style_footer',
+            [
+                'label' => esc_html__('Footer Links', 'spotify-elementor-sidebar-menu'),
+                'tab' => \Elementor\Controls_Manager::TAB_STYLE,
+            ]
+        );
+
+        $this->add_control(
+            'footer_color',
+            [
+                'label' => esc_html__('Text Color', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .sems-footer-links a' => 'color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'footer_hover_color',
+            [
+                'label' => esc_html__('Hover Color', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .sems-footer-links a:hover' => 'color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_group_control(
+            \Elementor\Group_Control_Typography::get_type(),
+            [
+                'name' => 'footer_typography',
+                'selector' => '{{WRAPPER}} .sems-footer-links a',
+            ]
+        );
+
+        $this->end_controls_section();
+    }
+
+    private function register_style_language_controls(): void {
+        $this->start_controls_section(
+            'style_language',
+            [
+                'label' => esc_html__('Language Button', 'spotify-elementor-sidebar-menu'),
+                'tab' => \Elementor\Controls_Manager::TAB_STYLE,
+            ]
+        );
+
+        $this->add_control(
+            'language_color',
+            [
+                'label' => esc_html__('Text Color', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .sems-language-btn' => 'color: {{VALUE}};',
+                    '{{WRAPPER}} .sems-language-switcher .trp-ls-shortcode-current-language > a' => 'color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'language_border_color',
+            [
+                'label' => esc_html__('Border Color', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .sems-language-btn' => 'border-color: {{VALUE}};',
+                    '{{WRAPPER}} .sems-language-switcher .trp-ls-shortcode-current-language > a' => 'border-color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_group_control(
+            \Elementor\Group_Control_Typography::get_type(),
+            [
+                'name' => 'language_typography',
+                'selector' => '{{WRAPPER}} .sems-language-btn, {{WRAPPER}} .sems-language-switcher .trp-ls-shortcode-current-language > a',
+            ]
+        );
+
+        $this->end_controls_section();
+    }
+
+    private function register_style_toggle_controls(): void {
+        $this->start_controls_section(
+            'style_toggle',
+            [
+                'label' => esc_html__('Toggle Button', 'spotify-elementor-sidebar-menu'),
+                'tab' => \Elementor\Controls_Manager::TAB_STYLE,
+                'condition' => [
+                    'enable_menu_toggle' => 'yes',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'toggle_icon_color',
+            [
+                'label' => esc_html__('Icon Color', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .sems-sidebar__toggle' => 'color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'toggle_bg_color',
+            [
+                'label' => esc_html__('Background', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .sems-sidebar__toggle' => 'background: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_responsive_control(
+            'toggle_icon_size',
+            [
+                'label' => esc_html__('Icon Size', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::SLIDER,
+                'size_units' => ['px'],
+                'range' => ['px' => ['min' => 10, 'max' => 30]],
+                'selectors' => [
+                    '{{WRAPPER}} .sems-sidebar__toggle svg' => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}};',
+                    '{{WRAPPER}} .sems-sidebar__toggle i' => 'font-size: {{SIZE}}{{UNIT}};',
+                ],
+            ]
+        );
+
+        $this->end_controls_section();
+    }
+
     protected function render(): void {
         $settings = $this->get_settings_for_display();
+        $collapsed = isset($settings['collapsed_default']) && 'yes' === $settings['collapsed_default'];
+        $enable_toggle = isset($settings['enable_menu_toggle']) && 'yes' === $settings['enable_menu_toggle'];
+
+        $sidebar_classes = 'sems-sidebar';
+        if ($collapsed) {
+            $sidebar_classes .= ' is-collapsed';
+        }
+
+        $sidebar_id = 'sems-sidebar-' . esc_attr($this->get_id());
 
         ?>
-        <aside class="sems-sidebar" aria-label="Sidebar menu">
+        <aside id="<?php echo esc_attr($sidebar_id); ?>" class="<?php echo esc_attr($sidebar_classes); ?>" aria-label="Sidebar menu">
             <div class="sems-sidebar__inner">
+                <?php if ($enable_toggle) : ?>
+                    <?php $this->render_toggle_button($collapsed, $settings); ?>
+                <?php endif; ?>
+
                 <?php $this->render_brand($settings); ?>
 
                 <nav class="sems-main-nav" aria-label="Main navigation">
@@ -332,6 +797,26 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
             </div>
         </aside>
         <?php
+
+        if ($enable_toggle) {
+            $this->render_toggle_script();
+        }
+    }
+
+    private function render_toggle_button(bool $collapsed, array $settings): void {
+        $expanded = !$collapsed;
+        $close_icon = $settings['toggle_close_icon'] ?? ['value' => 'eicon-close', 'library' => 'eicons'];
+        $open_icon = $settings['toggle_open_icon'] ?? ['value' => 'eicon-menu-bar', 'library' => 'eicons'];
+
+        echo '<button type="button" class="sems-sidebar__toggle" aria-expanded="' . ($expanded ? 'true' : 'false') . '">';
+        echo '<span class="sems-sidebar__toggle-close" aria-hidden="true">';
+        \Elementor\Icons_Manager::render_icon($close_icon, ['aria-hidden' => 'true']);
+        echo '</span>';
+        echo '<span class="sems-sidebar__toggle-open" aria-hidden="true">';
+        \Elementor\Icons_Manager::render_icon($open_icon, ['aria-hidden' => 'true']);
+        echo '</span>';
+        echo '<span class="screen-reader-text">' . esc_html__('Toggle sidebar menu', 'spotify-elementor-sidebar-menu') . '</span>';
+        echo '</button>';
     }
 
     private function render_brand(array $settings): void {
@@ -382,7 +867,7 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
             echo '<span class="sems-icon">';
             \Elementor\Icons_Manager::render_icon($item['icon'] ?? [], ['aria-hidden' => 'true']);
             echo '</span>';
-            echo '<span>' . esc_html($label) . '</span>';
+            echo '<span class="sems-item-label">' . esc_html($label) . '</span>';
             echo '</a>';
         }
     }
@@ -405,7 +890,7 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
             echo '<span class="' . esc_attr($badge_classes) . '">';
             \Elementor\Icons_Manager::render_icon($item['icon'] ?? [], ['aria-hidden' => 'true']);
             echo '</span>';
-            echo '<span>' . esc_html($label) . '</span>';
+            echo '<span class="sems-item-label">' . esc_html($label) . '</span>';
             echo '</a>';
         }
     }
@@ -459,7 +944,7 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
         echo '<span class="sems-language-btn__icon">';
         $this->render_globe_icon();
         echo '</span>';
-        echo '<span>' . esc_html($label) . '</span>';
+        echo '<span class="sems-item-label">' . esc_html($label) . '</span>';
         echo '</a>';
     }
 
@@ -508,6 +993,31 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
         }
 
         echo '<a ' . $this->get_render_attribute_string($key) . '>';
+    }
+
+    private function render_toggle_script(): void {
+        ?>
+        <script>
+            (function () {
+                var script = document.currentScript;
+                if (!script) {
+                    return;
+                }
+                var sidebar = script.previousElementSibling;
+                if (!sidebar || !sidebar.classList.contains('sems-sidebar')) {
+                    return;
+                }
+                var button = sidebar.querySelector('.sems-sidebar__toggle');
+                if (!button) {
+                    return;
+                }
+                button.addEventListener('click', function () {
+                    sidebar.classList.toggle('is-collapsed');
+                    button.setAttribute('aria-expanded', sidebar.classList.contains('is-collapsed') ? 'false' : 'true');
+                });
+            })();
+        </script>
+        <?php
     }
 
     private function render_globe_icon(): void {

@@ -4,14 +4,56 @@
     background: #000;
     color: #fff;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    transition: width 0.2s ease;
 }
 
 .sems-sidebar__inner {
+    position: relative;
     box-sizing: border-box;
     min-height: 832px;
     padding: 24px 24px 28px;
     display: flex;
     flex-direction: column;
+}
+
+.sems-sidebar__toggle {
+    position: absolute;
+    top: 18px;
+    right: 14px;
+    width: 28px;
+    height: 28px;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 3;
+}
+
+.sems-sidebar__toggle svg {
+    width: 14px;
+    height: 14px;
+    display: block;
+}
+
+.sems-sidebar__toggle i {
+    font-size: 14px;
+    line-height: 1;
+}
+
+.sems-sidebar__toggle-open {
+    display: none;
+}
+
+.sems-sidebar.is-collapsed .sems-sidebar__toggle-close {
+    display: none;
+}
+
+.sems-sidebar.is-collapsed .sems-sidebar__toggle-open {
+    display: inline-flex;
 }
 
 .sems-brand {
@@ -242,4 +284,39 @@
     text-decoration: none;
     font-size: 13px;
     line-height: 1.4;
+}
+
+.sems-sidebar.is-collapsed {
+    width: 86px;
+}
+
+.sems-sidebar.is-collapsed .sems-brand {
+    justify-content: center;
+}
+
+.sems-sidebar.is-collapsed .sems-brand__text,
+.sems-sidebar.is-collapsed .sems-item-label,
+.sems-sidebar.is-collapsed .sems-footer-links,
+.sems-sidebar.is-collapsed .sems-language-btn span:not(.sems-language-btn__icon),
+.sems-sidebar.is-collapsed .sems-language-switcher .trp-ls-shortcode-current-language > a span,
+.sems-sidebar.is-collapsed .sems-language-switcher .trp-ls-shortcode-language {
+    display: none;
+}
+
+.sems-sidebar.is-collapsed .sems-main-nav__item,
+.sems-sidebar.is-collapsed .sems-shortcuts__item {
+    justify-content: center;
+    gap: 0;
+}
+
+.sems-sidebar.is-collapsed .sems-shortcuts {
+    margin-bottom: 32px;
+}
+
+.sems-sidebar.is-collapsed .sems-language-btn,
+.sems-sidebar.is-collapsed .sems-language-switcher .trp-ls-shortcode-current-language > a {
+    padding-left: 7px;
+    padding-right: 7px;
+    min-width: 32px;
+    justify-content: center;
 }
