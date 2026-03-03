@@ -9,7 +9,8 @@
     background: #000;
     color: #fff;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    overflow: visible;
+    overflow-x: hidden;
+    overflow-y: hidden;
     transition: width 0.2s ease;
 }
 
@@ -21,7 +22,7 @@
     display: flex;
     flex-direction: column;
     overflow-y: auto;
-    overflow-x: visible;
+    overflow-x: hidden;
 }
 
 .sems-sidebar__toggle {
@@ -364,34 +365,6 @@
 .sems-sidebar.is-collapsed .sems-shortcuts__item:hover .sems-square-icon {
     transform: scale(1.08);
     box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.25);
-}
-
-.sems-sidebar.is-collapsed .sems-main-nav__item::after,
-.sems-sidebar.is-collapsed .sems-shortcuts__item::after {
-    content: attr(data-tooltip);
-    position: absolute;
-    left: calc(100% + 10px);
-    top: 50%;
-    transform: translateY(-50%);
-    background: #1b1b1b;
-    color: #fff;
-    border: 1px solid #2f2f2f;
-    border-radius: 6px;
-    padding: 6px 10px;
-    font-size: 12px;
-    line-height: 1;
-    white-space: nowrap;
-    opacity: 0;
-    pointer-events: none;
-    visibility: hidden;
-    transition: opacity 0.18s ease;
-    z-index: 100001;
-}
-
-.sems-sidebar.is-collapsed .sems-main-nav__item:hover::after,
-.sems-sidebar.is-collapsed .sems-shortcuts__item:hover::after {
-    opacity: 1;
-    visibility: visible;
 }
 
 .sems-sidebar.is-collapsed .sems-shortcuts {

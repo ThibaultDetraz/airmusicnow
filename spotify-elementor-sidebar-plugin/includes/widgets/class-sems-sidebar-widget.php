@@ -1023,6 +1023,7 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
 
         if ('' !== trim($tooltip)) {
             $this->add_render_attribute($key, 'data-tooltip', $tooltip);
+            $this->add_render_attribute($key, 'title', $tooltip);
         }
 
         $url = '#';
