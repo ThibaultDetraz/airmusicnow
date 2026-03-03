@@ -22,7 +22,7 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
     }
 
     public function get_style_depends(): array {
-        return ['sems-sidebar-menu'];
+        return ['sems-sidebar-menu', 'elementor-icons'];
     }
 
     protected function register_controls(): void {
@@ -872,7 +872,7 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
 
             $this->render_link_open($item['url'] ?? [], $classes, 'menu-item-' . $index);
             echo '<span class="sems-icon">';
-            \Elementor\Icons_Manager::render_icon($item['icon'] ?? [], ['aria-hidden' => 'true']);
+            echo $this->get_icon_markup($item['icon'] ?? [], $this->get_main_menu_fallback_icon($index));
             echo '</span>';
             echo '<span class="sems-item-label">' . esc_html($label) . '</span>';
             echo '</a>';
@@ -895,11 +895,48 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
 
             $this->render_link_open($item['url'] ?? [], 'sems-shortcuts__item', 'shortcut-item-' . $index);
             echo '<span class="' . esc_attr($badge_classes) . '">';
-            \Elementor\Icons_Manager::render_icon($item['icon'] ?? [], ['aria-hidden' => 'true']);
+            echo $this->get_icon_markup($item['icon'] ?? [], $this->get_shortcut_fallback_icon($badge_style));
             echo '</span>';
             echo '<span class="sems-item-label">' . esc_html($label) . '</span>';
             echo '</a>';
         }
+    }
+
+    private function get_icon_markup(array $icon_settings, string $fallback_svg): string {
+        if (!empty($icon_settings['value'])) {
+            ob_start();
+            \Elementor\Icons_Manager::render_icon($icon_settings, ['aria-hidden' => 'true']);
+            $icon_markup = trim((string) ob_get_clean());
+            if ('' !== $icon_markup) {
+                return $icon_markup;
+            }
+        }
+
+        return $fallback_svg;
+    }
+
+    private function get_main_menu_fallback_icon(int $index): string {
+        if (0 === $index) {
+            return '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path fill="currentColor" d="M12 3l9 7v11h-6v-7H9v7H3V10l9-7z"/></svg>';
+        }
+
+        if (1 === $index) {
+            return '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path fill="currentColor" d="M10.5 3a7.5 7.5 0 015.96 12.06l4.24 4.24-1.41 1.41-4.24-4.24A7.5 7.5 0 1110.5 3zm0 2a5.5 5.5 0 100 11 5.5 5.5 0 000-11z"/></svg>';
+        }
+
+        if (2 === $index) {
+            return '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path fill="currentColor" d="M3 4h2v16H3V4zm4 2h2v14H7V6zm4-2h2v16h-2V4zm4 4h2v12h-2V8zm4-2h2v14h-2V6z"/></svg>';
+        }
+
+        return '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="currentColor"/></svg>';
+    }
+
+    private function get_shortcut_fallback_icon(string $badge_style): string {
+        if ('liked' === $badge_style) {
+            return '<svg viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path fill="currentColor" d="M6 10.2L5.2 9.5C2.7 7.3 1 5.8 1 3.9A2.4 2.4 0 013.4 1.5c1 0 1.9.5 2.6 1.3.7-.8 1.6-1.3 2.6-1.3A2.4 2.4 0 0111 3.9c0 1.9-1.7 3.4-4.2 5.6l-.8.7z"/></svg>';
+        }
+
+        return '<svg viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path fill="currentColor" d="M5 1h2v4h4v2H7v4H5V7H1V5h4V1z"/></svg>';
     }
 
     private function render_footer_links(string $links): void {
