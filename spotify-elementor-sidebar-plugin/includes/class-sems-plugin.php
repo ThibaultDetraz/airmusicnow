@@ -6,6 +6,7 @@ if (!defined('ABSPATH')) {
 
 final class SEMS_Plugin {
     private static ?SEMS_Plugin $instance = null;
+    private bool $widget_registered = false;
 
     public static function instance(): SEMS_Plugin {
         if (null === self::$instance) {
@@ -20,12 +21,33 @@ final class SEMS_Plugin {
     }
 
     public function init(): void {
-        if (!did_action('elementor/loaded')) {
+        if (!$this->is_compatible()) {
             return;
         }
 
-        add_action('wp_enqueue_scripts', [$this, 'register_assets']);
+        add_action('elementor/frontend/after_register_styles', [$this, 'register_assets']);
+        add_action('elementor/editor/before_enqueue_styles', [$this, 'register_assets']);
         add_action('elementor/widgets/register', [$this, 'register_widgets']);
+        add_action('elementor/widgets/widgets_registered', [$this, 'register_widgets_legacy']);
+    }
+
+    private function is_compatible(): bool {
+        if (!did_action('elementor/loaded')) {
+            add_action('admin_notices', [$this, 'admin_notice_missing_main_plugin']);
+            return false;
+        }
+
+        if (version_compare(PHP_VERSION, SEMS_MINIMUM_PHP_VERSION, '<')) {
+            add_action('admin_notices', [$this, 'admin_notice_minimum_php_version']);
+            return false;
+        }
+
+        if (defined('ELEMENTOR_VERSION') && version_compare(ELEMENTOR_VERSION, SEMS_MINIMUM_ELEMENTOR_VERSION, '<')) {
+            add_action('admin_notices', [$this, 'admin_notice_minimum_elementor_version']);
+            return false;
+        }
+
+        return true;
     }
 
     public function register_assets(): void {
@@ -38,8 +60,64 @@ final class SEMS_Plugin {
     }
 
     public function register_widgets($widgets_manager): void {
+        if ($this->widget_registered) {
+            return;
+        }
+
         require_once SEMS_PLUGIN_PATH . 'includes/widgets/class-sems-sidebar-widget.php';
 
         $widgets_manager->register(new SEMS_Sidebar_Widget());
+        $this->widget_registered = true;
+    }
+
+    public function register_widgets_legacy(): void {
+        if ($this->widget_registered || !class_exists('\\Elementor\\Plugin')) {
+            return;
+        }
+
+        require_once SEMS_PLUGIN_PATH . 'includes/widgets/class-sems-sidebar-widget.php';
+
+        $widgets_manager = \Elementor\Plugin::instance()->widgets_manager;
+
+        if (method_exists($widgets_manager, 'register')) {
+            $widgets_manager->register(new SEMS_Sidebar_Widget());
+        } elseif (method_exists($widgets_manager, 'register_widget_type')) {
+            $widgets_manager->register_widget_type(new SEMS_Sidebar_Widget());
+        }
+
+        $this->widget_registered = true;
+    }
+
+    public function admin_notice_missing_main_plugin(): void {
+        if (!current_user_can('activate_plugins')) {
+            return;
+        }
+
+        printf(
+            '<div class="notice notice-warning is-dismissible"><p>%s</p></div>',
+            esc_html__('Spotify Sidebar Menu for Elementor requires Elementor to be installed and activated.', 'spotify-elementor-sidebar-menu')
+        );
+    }
+
+    public function admin_notice_minimum_php_version(): void {
+        if (!current_user_can('activate_plugins')) {
+            return;
+        }
+
+        printf(
+            '<div class="notice notice-warning is-dismissible"><p>%s</p></div>',
+            esc_html(sprintf('Spotify Sidebar Menu for Elementor requires PHP version %s or greater.', SEMS_MINIMUM_PHP_VERSION))
+        );
+    }
+
+    public function admin_notice_minimum_elementor_version(): void {
+        if (!current_user_can('activate_plugins')) {
+            return;
+        }
+
+        printf(
+            '<div class="notice notice-warning is-dismissible"><p>%s</p></div>',
+            esc_html(sprintf('Spotify Sidebar Menu for Elementor requires Elementor version %s or greater.', SEMS_MINIMUM_ELEMENTOR_VERSION))
+        );
     }
 }

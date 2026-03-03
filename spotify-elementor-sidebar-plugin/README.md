@@ -2,10 +2,13 @@
 
 Custom WordPress plugin that adds one Elementor widget matching the Spotify sidebar menu design from Figma.
 
+Current plugin version: **1.1.0**
+
 ## Widget
 - Name in Elementor: **Spotify Sidebar Menu**
 - Category: **General**
 - Fixed design width: `241px`
+- Registration: supports both modern and legacy Elementor widget registration hooks
 
 ## Install
 1. Zip the folder `spotify-elementor-sidebar-plugin`.
@@ -20,6 +23,6 @@ Custom WordPress plugin that adds one Elementor widget matching the Spotify side
 
 ## Files
 - `spotify-elementor-sidebar-menu.php` – plugin bootstrap
-- `includes/class-sems-plugin.php` – Elementor integration and asset registration
+- `includes/class-sems-plugin.php` – compatibility checks, Elementor registration, and asset registration
 - `includes/widgets/class-sems-sidebar-widget.php` – widget markup and SVG icons
 - `assets/css/sidebar-menu.css` – Spotify-style visual design
