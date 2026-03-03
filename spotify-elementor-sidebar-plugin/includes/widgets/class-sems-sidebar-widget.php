@@ -10,7 +10,7 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
     }
 
     public function get_title(): string {
-        return esc_html__('Spotify Sidebar Menu', 'spotify-elementor-sidebar-menu');
+        return esc_html__('Ultimate Index Addon-ons', 'spotify-elementor-sidebar-menu');
     }
 
     public function get_icon(): string {

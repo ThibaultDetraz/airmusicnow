@@ -95,7 +95,7 @@ final class SEMS_Plugin {
 
         printf(
             '<div class="notice notice-warning is-dismissible"><p>%s</p></div>',
-            esc_html__('Spotify Sidebar Menu for Elementor requires Elementor to be installed and activated.', 'spotify-elementor-sidebar-menu')
+            esc_html__('Ultimate Index Addon-ons requires Elementor to be installed and activated.', 'spotify-elementor-sidebar-menu')
         );
     }
 
@@ -106,7 +106,7 @@ final class SEMS_Plugin {
 
         printf(
             '<div class="notice notice-warning is-dismissible"><p>%s</p></div>',
-            esc_html(sprintf('Spotify Sidebar Menu for Elementor requires PHP version %s or greater.', SEMS_MINIMUM_PHP_VERSION))
+            esc_html(sprintf('Ultimate Index Addon-ons requires PHP version %s or greater.', SEMS_MINIMUM_PHP_VERSION))
         );
     }
 
@@ -117,7 +117,7 @@ final class SEMS_Plugin {
 
         printf(
             '<div class="notice notice-warning is-dismissible"><p>%s</p></div>',
-            esc_html(sprintf('Spotify Sidebar Menu for Elementor requires Elementor version %s or greater.', SEMS_MINIMUM_ELEMENTOR_VERSION))
+            esc_html(sprintf('Ultimate Index Addon-ons requires Elementor version %s or greater.', SEMS_MINIMUM_ELEMENTOR_VERSION))
         );
     }
 }

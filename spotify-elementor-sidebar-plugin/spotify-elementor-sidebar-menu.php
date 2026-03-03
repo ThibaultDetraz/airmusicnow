@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: Spotify Sidebar Menu for Elementor
+ * Plugin Name: Ultimate Index Addon-ons
  * Description: Adds a Spotify-style sidebar menu widget for Elementor.
  * Version: 1.1.0
  * Author: Copilot

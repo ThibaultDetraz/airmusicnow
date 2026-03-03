@@ -1,11 +1,11 @@
-# Spotify Sidebar Menu for Elementor
+# Ultimate Index Addon-ons
 
 Custom WordPress plugin that adds one Elementor widget matching the Spotify sidebar menu design from Figma.
 
 Current plugin version: **1.1.0**
 
 ## Widget
-- Name in Elementor: **Spotify Sidebar Menu**
+- Name in Elementor: **Ultimate Index Addon-ons**
 - Category: **General**
 - Fixed design width: `241px`
 - Registration: supports both modern and legacy Elementor widget registration hooks
@@ -18,7 +18,7 @@ Current plugin version: **1.1.0**
 
 ## Use in Elementor
 1. Edit a page with Elementor.
-2. Search for **Spotify Sidebar Menu** in the widgets panel.
+2. Search for **Ultimate Index Addon-ons** in the widgets panel.
 3. Drag it to your layout.
 
 ## Files
