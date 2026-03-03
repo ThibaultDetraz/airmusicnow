@@ -10,7 +10,6 @@
     color: #fff;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     overflow-y: auto;
-    overflow-x: hidden;
     transform: translateX(0);
     transition: transform 0.3s ease;
 }
@@ -22,6 +21,7 @@
     padding: 24px 24px 28px;
     display: flex;
     flex-direction: column;
+    overflow: visible;
 }
 
 .sems-sidebar__toggle {
