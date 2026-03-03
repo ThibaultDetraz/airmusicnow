@@ -5,11 +5,11 @@ Custom WordPress plugin that adds one Elementor widget matching the Spotify side
 Current plugin version: **1.1.0**
 
 ## Widget
-- Name in Elementor: **Ultimate Index Addon-ons**
+- Name in Elementor: **Air Music Now Sidebar**
 - Category: **General**
 - Fixed design width: `241px`
 - Registration: supports both modern and legacy Elementor widget registration hooks
-- Controls: logo image/text, main menu repeater (label/link/icon/active), shortcut repeater (label/link/icon/style), footer links
+- Controls: logo image, main menu repeater (label/link/icon/active), shortcut repeater (label/link/icon/style), footer links
 - Language area: integrates with TranslatePress switcher automatically when plugin is active
 
 ## Install
@@ -20,7 +20,7 @@ Current plugin version: **1.1.0**
 
 ## Use in Elementor
 1. Edit a page with Elementor.
-2. Search for **Ultimate Index Addon-ons** in the widgets panel.
+2. Search for **Air Music Now Sidebar** in the widgets panel.
 3. Drag it to your layout.
 
 ## Files

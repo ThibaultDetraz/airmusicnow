@@ -10,7 +10,7 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
     }
 
     public function get_title(): string {
-        return esc_html__('Ultimate Index Addon-ons', 'spotify-elementor-sidebar-menu');
+        return esc_html__('Air Music Now Sidebar', 'spotify-elementor-sidebar-menu');
     }
 
     public function get_icon(): string {
@@ -52,15 +52,6 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
                 'default' => [
                     'url' => '',
                 ],
-            ]
-        );
-
-        $this->add_control(
-            'brand_text',
-            [
-                'label' => esc_html__('Brand Text', 'spotify-elementor-sidebar-menu'),
-                'type' => \Elementor\Controls_Manager::TEXT,
-                'default' => 'Spotify',
             ]
         );
 
@@ -443,27 +434,19 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
         $this->start_controls_section(
             'style_brand',
             [
-                'label' => esc_html__('Brand', 'spotify-elementor-sidebar-menu'),
+                'label' => esc_html__('Logo', 'spotify-elementor-sidebar-menu'),
                 'tab' => \Elementor\Controls_Manager::TAB_STYLE,
             ]
         );
 
         $this->add_control(
-            'brand_text_color',
+            'brand_logo_color',
             [
-                'label' => esc_html__('Text Color', 'spotify-elementor-sidebar-menu'),
+                'label' => esc_html__('Logo Color (SVG)', 'spotify-elementor-sidebar-menu'),
                 'type' => \Elementor\Controls_Manager::COLOR,
                 'selectors' => [
-                    '{{WRAPPER}} .sems-brand__text' => 'color: {{VALUE}};',
+                    '{{WRAPPER}} .sems-brand__icon' => 'color: {{VALUE}};',
                 ],
-            ]
-        );
-
-        $this->add_group_control(
-            \Elementor\Group_Control_Typography::get_type(),
-            [
-                'name' => 'brand_typography',
-                'selector' => '{{WRAPPER}} .sems-brand__text',
             ]
         );
 
@@ -820,7 +803,6 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
     }
 
     private function render_brand(array $settings): void {
-        $brand_text = $settings['brand_text'] ?? 'Spotify';
         $logo_url = '';
 
         if (!empty($settings['brand_logo']['url'])) {
@@ -828,10 +810,10 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
         }
 
         ?>
-        <div class="sems-brand" role="img" aria-label="<?php echo esc_attr($brand_text); ?>">
+        <div class="sems-brand" role="img" aria-label="Logo">
             <div class="sems-brand__icon">
                 <?php if (!empty($logo_url)) : ?>
-                    <img src="<?php echo esc_url($logo_url); ?>" alt="<?php echo esc_attr($brand_text); ?>" />
+                    <img src="<?php echo esc_url($logo_url); ?>" alt="Logo" />
                 <?php else : ?>
                     <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                         <circle cx="12" cy="12" r="12" fill="currentColor" />
@@ -841,7 +823,6 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
                     </svg>
                 <?php endif; ?>
             </div>
-            <span class="sems-brand__text"><?php echo esc_html($brand_text); ?></span>
         </div>
         <?php
     }
