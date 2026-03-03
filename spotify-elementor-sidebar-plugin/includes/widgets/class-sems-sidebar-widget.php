@@ -55,6 +55,18 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
             ]
         );
 
+        $this->add_control(
+            'brand_logo_collapsed',
+            [
+                'label' => esc_html__('Collapsed Logo Image', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::MEDIA,
+                'description' => esc_html__('Used when the sidebar is collapsed.', 'spotify-elementor-sidebar-menu'),
+                'default' => [
+                    'url' => '',
+                ],
+            ]
+        );
+
         $this->end_controls_section();
     }
 
@@ -451,14 +463,14 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
         );
 
         $this->add_responsive_control(
-            'brand_logo_size',
+            'brand_logo_max_height',
             [
-                'label' => esc_html__('Logo Size', 'spotify-elementor-sidebar-menu'),
+                'label' => esc_html__('Logo Max Height', 'spotify-elementor-sidebar-menu'),
                 'type' => \Elementor\Controls_Manager::SLIDER,
                 'size_units' => ['px'],
-                'range' => ['px' => ['min' => 16, 'max' => 80]],
+                'range' => ['px' => ['min' => 20, 'max' => 140]],
                 'selectors' => [
-                    '{{WRAPPER}} .sems-brand__icon' => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}};',
+                    '{{WRAPPER}} .sems-brand__icon' => 'max-height: {{SIZE}}{{UNIT}};',
                 ],
             ]
         );
@@ -804,23 +816,37 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
 
     private function render_brand(array $settings): void {
         $logo_url = '';
+        $collapsed_logo_url = '';
 
         if (!empty($settings['brand_logo']['url'])) {
             $logo_url = $settings['brand_logo']['url'];
         }
 
+        if (!empty($settings['brand_logo_collapsed']['url'])) {
+            $collapsed_logo_url = $settings['brand_logo_collapsed']['url'];
+        }
+
+        $brand_class = 'sems-brand';
+        if (!empty($collapsed_logo_url)) {
+            $brand_class .= ' has-collapsed-logo';
+        }
+
         ?>
-        <div class="sems-brand" role="img" aria-label="Logo">
+        <div class="<?php echo esc_attr($brand_class); ?>" role="img" aria-label="Logo">
             <div class="sems-brand__icon">
                 <?php if (!empty($logo_url)) : ?>
-                    <img src="<?php echo esc_url($logo_url); ?>" alt="Logo" />
+                    <img class="sems-brand__img sems-brand__img--expanded" src="<?php echo esc_url($logo_url); ?>" alt="Logo" />
                 <?php else : ?>
-                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <svg class="sems-brand__img sems-brand__img--expanded" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                         <circle cx="12" cy="12" r="12" fill="currentColor" />
                         <path d="M6.1 8.9c3.7-1.1 8-0.8 11.5 1 .4.2.6.7.4 1.1-.2.4-.7.6-1.1.4-3.1-1.6-7-1.9-10.4-.9-.4.1-.9-.1-1-.6-.1-.4.1-.9.6-1z" fill="#000"/>
                         <path d="M6.9 11.8c3-0.9 6.5-0.7 9.2.7.4.2.5.6.3 1-.2.4-.6.5-1 .3-2.4-1.2-5.4-1.4-8.1-.6-.4.1-.8-.1-.9-.5-.1-.4.1-.8.5-.9z" fill="#000"/>
                         <path d="M7.7 14.5c2.3-.7 4.8-.5 6.9.5.3.2.4.5.3.8-.2.3-.5.4-.8.3-1.8-.9-4-.9-5.9-.4-.3.1-.7-.1-.8-.4-.1-.3.1-.7.4-.8z" fill="#000"/>
                     </svg>
+                <?php endif; ?>
+
+                <?php if (!empty($collapsed_logo_url)) : ?>
+                    <img class="sems-brand__img sems-brand__img--collapsed" src="<?php echo esc_url($collapsed_logo_url); ?>" alt="Collapsed Logo" />
                 <?php endif; ?>
             </div>
         </div>
