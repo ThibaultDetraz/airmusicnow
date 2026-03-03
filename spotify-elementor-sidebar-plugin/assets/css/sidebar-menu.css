@@ -9,8 +9,7 @@
     background: #000;
     color: #fff;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    overflow-y: auto;
-    overflow-x: hidden;
+    overflow: visible;
     transition: width 0.2s ease;
 }
 
@@ -21,6 +20,8 @@
     padding: 24px 24px 28px;
     display: flex;
     flex-direction: column;
+    overflow-y: auto;
+    overflow-x: visible;
 }
 
 .sems-sidebar__toggle {
@@ -32,7 +33,7 @@
     border: 0;
     border-radius: 50%;
     background: rgba(255, 255, 255, 0.08);
-    color: #fff;
+    color: inherit;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -44,11 +45,19 @@
     width: 14px;
     height: 14px;
     display: block;
+    color: inherit !important;
+    fill: currentColor !important;
 }
 
 .sems-sidebar__toggle i {
     font-size: 14px;
     line-height: 1;
+    color: inherit !important;
+}
+
+.sems-sidebar__toggle svg * {
+    fill: currentColor !important;
+    stroke: currentColor !important;
 }
 
 .sems-sidebar__toggle-open {
@@ -376,7 +385,7 @@
     pointer-events: none;
     visibility: hidden;
     transition: opacity 0.18s ease;
-    z-index: 20;
+    z-index: 100001;
 }
 
 .sems-sidebar.is-collapsed .sems-main-nav__item:hover::after,
