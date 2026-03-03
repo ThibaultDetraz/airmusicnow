@@ -404,6 +404,11 @@
     content: none;
 }
 
+.sems-sidebar.is-collapsed .sems-main-nav__item:hover::after,
+.sems-sidebar.is-collapsed .sems-shortcuts__item:hover::after {
+    opacity: 0;
+}
+
 .sems-sidebar.is-collapsed .sems-shortcuts {
     margin-bottom: 230px;
 }
