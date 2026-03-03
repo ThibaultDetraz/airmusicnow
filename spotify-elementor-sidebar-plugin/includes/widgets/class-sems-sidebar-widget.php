@@ -1060,9 +1060,62 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
                 if (!button) {
                     return;
                 }
+
+                var tooltip = document.getElementById('sems-floating-tooltip');
+                if (!tooltip) {
+                    tooltip = document.createElement('div');
+                    tooltip.id = 'sems-floating-tooltip';
+                    tooltip.className = 'sems-floating-tooltip';
+                    document.body.appendChild(tooltip);
+                }
+
+                var tooltipTargets = sidebar.querySelectorAll('.sems-main-nav__item[data-tooltip], .sems-shortcuts__item[data-tooltip]');
+
+                var positionTooltip = function (target) {
+                    var rect = target.getBoundingClientRect();
+                    tooltip.style.left = (rect.right + 10) + 'px';
+                    tooltip.style.top = (rect.top + (rect.height / 2)) + 'px';
+                };
+
+                var showTooltip = function (target) {
+                    if (!sidebar.classList.contains('is-collapsed')) {
+                        return;
+                    }
+
+                    var text = target.getAttribute('data-tooltip');
+                    if (!text) {
+                        return;
+                    }
+
+                    tooltip.textContent = text;
+                    positionTooltip(target);
+                    tooltip.classList.add('is-visible');
+                };
+
+                var hideTooltip = function () {
+                    tooltip.classList.remove('is-visible');
+                };
+
+                tooltipTargets.forEach(function (target) {
+                    target.addEventListener('mouseenter', function () {
+                        showTooltip(target);
+                    });
+                    target.addEventListener('mousemove', function () {
+                        if (tooltip.classList.contains('is-visible')) {
+                            positionTooltip(target);
+                        }
+                    });
+                    target.addEventListener('mouseleave', hideTooltip);
+                    target.addEventListener('focus', function () {
+                        showTooltip(target);
+                    });
+                    target.addEventListener('blur', hideTooltip);
+                });
+
                 button.addEventListener('click', function () {
                     sidebar.classList.toggle('is-collapsed');
                     button.setAttribute('aria-expanded', sidebar.classList.contains('is-collapsed') ? 'false' : 'true');
+                    hideTooltip();
                 });
             })();
         </script>

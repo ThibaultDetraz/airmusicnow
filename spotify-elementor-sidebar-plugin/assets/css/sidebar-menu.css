@@ -390,3 +390,26 @@
 .sems-sidebar.is-collapsed .sems-language-switcher .trp-ls-shortcode-current-language > a svg {
     display: none !important;
 }
+
+.sems-floating-tooltip {
+    position: fixed;
+    transform: translateY(-50%);
+    background: #1b1b1b;
+    color: #fff;
+    border: 1px solid #2f2f2f;
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 12px;
+    line-height: 1;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.15s ease;
+    z-index: 100001;
+}
+
+.sems-floating-tooltip.is-visible {
+    opacity: 1;
+    visibility: visible;
+}
