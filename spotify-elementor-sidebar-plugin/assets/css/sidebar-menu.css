@@ -10,6 +10,7 @@
     color: #fff;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     overflow-y: auto;
+    overflow-x: hidden;
     transform: translateX(0);
     transition: transform 0.3s ease;
 }
@@ -21,7 +22,6 @@
     padding: 24px 24px 28px;
     display: flex;
     flex-direction: column;
-    overflow: visible;
 }
 
 .sems-sidebar__toggle {
@@ -378,6 +378,7 @@
 
 .sems-sidebar.is-collapsed .sems-main-nav__item,
 .sems-sidebar.is-collapsed .sems-shortcuts__item {
+    position: relative;
     justify-content: flex-start;
     gap: 16px;
 }
@@ -401,12 +402,23 @@
 
 .sems-sidebar.is-collapsed .sems-main-nav__item::after,
 .sems-sidebar.is-collapsed .sems-shortcuts__item::after {
-    content: none;
-}
-
-.sems-sidebar.is-collapsed .sems-main-nav__item:hover::after,
-.sems-sidebar.is-collapsed .sems-shortcuts__item:hover::after {
-    opacity: 0;
+    content: attr(data-tooltip);
+    position: absolute;
+    left: calc(100% + 10px);
+    top: 50%;
+    transform: translateY(-50%);
+    background: #1b1b1b;
+    color: #fff;
+    border: 1px solid #2f2f2f;
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 12px;
+    line-height: 1;
+    white-space: nowrap;
+    opacity: 1;
+    pointer-events: none;
+    visibility: visible;
+    z-index: 20;
 }
 
 .sems-sidebar.is-collapsed .sems-shortcuts {
