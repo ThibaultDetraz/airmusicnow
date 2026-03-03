@@ -870,7 +870,7 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
                 $classes .= ' is-active';
             }
 
-            $this->render_link_open($item['url'] ?? [], $classes, 'menu-item-' . $index);
+            $this->render_link_open($item['url'] ?? [], $classes, 'menu-item-' . $index, $label);
             echo '<span class="sems-icon">';
             echo $this->get_icon_markup($item['icon'] ?? [], $this->get_main_menu_fallback_icon($index));
             echo '</span>';
@@ -893,7 +893,7 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
             $badge_style = $item['badge_style'] ?? 'plus';
             $badge_classes = 'sems-square-icon sems-square-icon--' . sanitize_html_class($badge_style);
 
-            $this->render_link_open($item['url'] ?? [], 'sems-shortcuts__item', 'shortcut-item-' . $index);
+            $this->render_link_open($item['url'] ?? [], 'sems-shortcuts__item', 'shortcut-item-' . $index, $label);
             echo '<span class="' . esc_attr($badge_classes) . '">';
             echo $this->get_icon_markup($item['icon'] ?? [], $this->get_shortcut_fallback_icon($badge_style));
             echo '</span>';
@@ -1018,8 +1018,12 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
         return true;
     }
 
-    private function render_link_open(array $url_settings, string $class, string $key): void {
+    private function render_link_open(array $url_settings, string $class, string $key, string $tooltip = ''): void {
         $this->add_render_attribute($key, 'class', $class);
+
+        if ('' !== trim($tooltip)) {
+            $this->add_render_attribute($key, 'data-tooltip', $tooltip);
+        }
 
         $url = '#';
         if (!empty($url_settings['url'])) {
