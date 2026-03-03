@@ -724,7 +724,7 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
                 'label' => esc_html__('Icon Color', 'spotify-elementor-sidebar-menu'),
                 'type' => \Elementor\Controls_Manager::COLOR,
                 'selectors' => [
-                    '{{WRAPPER}} .sems-sidebar__toggle, {{WRAPPER}} .sems-sidebar__launcher' => 'color: {{VALUE}};',
+                    '{{WRAPPER}} .sems-sidebar__toggle' => 'color: {{VALUE}};',
                 ],
             ]
         );
@@ -735,7 +735,7 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
                 'label' => esc_html__('Background', 'spotify-elementor-sidebar-menu'),
                 'type' => \Elementor\Controls_Manager::COLOR,
                 'selectors' => [
-                    '{{WRAPPER}} .sems-sidebar__toggle, {{WRAPPER}} .sems-sidebar__launcher' => 'background: {{VALUE}};',
+                    '{{WRAPPER}} .sems-sidebar__toggle' => 'background: {{VALUE}};',
                 ],
             ]
         );
@@ -748,8 +748,8 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
                 'size_units' => ['px'],
                 'range' => ['px' => ['min' => 10, 'max' => 30]],
                 'selectors' => [
-                    '{{WRAPPER}} .sems-sidebar__toggle svg, {{WRAPPER}} .sems-sidebar__launcher svg' => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}};',
-                    '{{WRAPPER}} .sems-sidebar__toggle i, {{WRAPPER}} .sems-sidebar__launcher i' => 'font-size: {{SIZE}}{{UNIT}};',
+                    '{{WRAPPER}} .sems-sidebar__toggle svg' => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}};',
+                    '{{WRAPPER}} .sems-sidebar__toggle i' => 'font-size: {{SIZE}}{{UNIT}};',
                 ],
             ]
         );
@@ -791,16 +791,10 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
                 <?php $this->render_language_switcher($settings); ?>
             </div>
         </aside>
-        <?php if ($enable_toggle) : ?>
-            <button type="button" class="sems-sidebar__launcher<?php echo $collapsed ? ' is-visible' : ''; ?>" data-sems-launcher="<?php echo esc_attr($sidebar_id); ?>" aria-controls="<?php echo esc_attr($sidebar_id); ?>" aria-label="<?php echo esc_attr__('Open sidebar menu', 'spotify-elementor-sidebar-menu'); ?>">
-                <?php \Elementor\Icons_Manager::render_icon($settings['toggle_open_icon'] ?? ['value' => 'eicon-menu-bar', 'library' => 'eicons'], ['aria-hidden' => 'true']); ?>
-            </button>
-            <div class="sems-sidebar__backdrop<?php echo $collapsed ? '' : ' is-visible'; ?>" data-sems-backdrop="<?php echo esc_attr($sidebar_id); ?>" aria-hidden="true"></div>
-        <?php endif; ?>
         <?php
 
         if ($enable_toggle) {
-            $this->render_toggle_script($sidebar_id);
+            $this->render_toggle_script();
         }
     }
 
@@ -1049,38 +1043,25 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
         echo '<a ' . $this->get_render_attribute_string($key) . '>';
     }
 
-    private function render_toggle_script(string $sidebar_id): void {
+    private function render_toggle_script(): void {
         ?>
         <script>
             (function () {
-                var sidebar = document.getElementById('<?php echo esc_js($sidebar_id); ?>');
-                if (!sidebar) {
+                var script = document.currentScript;
+                if (!script) {
                     return;
                 }
-                var closeButton = sidebar.querySelector('.sems-sidebar__toggle');
-                var launcher = document.querySelector('[data-sems-launcher="<?php echo esc_js($sidebar_id); ?>"]');
-                var backdrop = document.querySelector('[data-sems-backdrop="<?php echo esc_js($sidebar_id); ?>"]');
-                if (!closeButton || !launcher || !backdrop) {
+                var sidebar = script.previousElementSibling;
+                if (!sidebar || !sidebar.classList.contains('sems-sidebar')) {
                     return;
                 }
-
-                var setCollapsed = function (collapsed) {
-                    sidebar.classList.toggle('is-collapsed', collapsed);
-                    launcher.classList.toggle('is-visible', collapsed);
-                    backdrop.classList.toggle('is-visible', !collapsed);
-                    closeButton.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
-                };
-
-                closeButton.addEventListener('click', function () {
-                    setCollapsed(!sidebar.classList.contains('is-collapsed'));
-                });
-
-                launcher.addEventListener('click', function () {
-                    setCollapsed(false);
-                });
-
-                backdrop.addEventListener('click', function () {
-                    setCollapsed(true);
+                var button = sidebar.querySelector('.sems-sidebar__toggle');
+                if (!button) {
+                    return;
+                }
+                button.addEventListener('click', function () {
+                    sidebar.classList.toggle('is-collapsed');
+                    button.setAttribute('aria-expanded', sidebar.classList.contains('is-collapsed') ? 'false' : 'true');
                 });
             })();
         </script>

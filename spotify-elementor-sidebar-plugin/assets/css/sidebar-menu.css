@@ -11,8 +11,7 @@
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     overflow-y: auto;
     overflow-x: hidden;
-    transform: translateX(0);
-    transition: transform 0.3s ease;
+    transition: width 0.2s ease;
 }
 
 .sems-sidebar__inner {
@@ -54,50 +53,6 @@
 
 .sems-sidebar__toggle-open {
     display: none;
-}
-
-.sems-sidebar__launcher {
-    position: fixed;
-    top: 18px;
-    left: 16px;
-    width: 36px;
-    height: 36px;
-    border: 0;
-    border-radius: 50%;
-    background: rgba(0, 0, 0, 0.7);
-    color: #fff;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    z-index: 100001;
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-    transition: opacity 0.2s ease;
-}
-
-.sems-sidebar__launcher.is-visible {
-    opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
-}
-
-.sems-sidebar__backdrop {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.45);
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-    z-index: 99998;
-    transition: opacity 0.25s ease;
-}
-
-.sems-sidebar__backdrop.is-visible {
-    opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
 }
 
 .sems-sidebar.is-collapsed .sems-sidebar__toggle-close {
@@ -353,11 +308,12 @@
 }
 
 .sems-sidebar.is-collapsed {
-    transform: translateX(-100%);
+    width: 86px;
 }
 
 .sems-sidebar.is-collapsed .sems-brand {
-    padding-right: 34px;
+    justify-content: center;
+    padding-right: 0;
 }
 
 .sems-sidebar.is-collapsed .sems-brand.has-collapsed-logo .sems-brand__img--expanded {
@@ -373,13 +329,15 @@
 .sems-sidebar.is-collapsed .sems-language-btn span:not(.sems-language-btn__icon),
 .sems-sidebar.is-collapsed .sems-language-switcher .trp-ls-shortcode-current-language > a span,
 .sems-sidebar.is-collapsed .sems-language-switcher .trp-ls-shortcode-language {
-    display: inherit;
+    display: none;
 }
 
 .sems-sidebar.is-collapsed .sems-main-nav__item,
 .sems-sidebar.is-collapsed .sems-shortcuts__item {
-    justify-content: flex-start;
-    gap: 16px;
+    position: relative;
+    justify-content: center;
+    gap: 0;
+    transition: color 0.18s ease;
 }
 
 .sems-sidebar.is-collapsed .sems-main-nav__item .sems-icon,
@@ -401,21 +359,42 @@
 
 .sems-sidebar.is-collapsed .sems-main-nav__item::after,
 .sems-sidebar.is-collapsed .sems-shortcuts__item::after {
-    content: none;
+    content: attr(data-tooltip);
+    position: absolute;
+    left: calc(100% + 10px);
+    top: 50%;
+    transform: translateY(-50%);
+    background: #1b1b1b;
+    color: #fff;
+    border: 1px solid #2f2f2f;
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 12px;
+    line-height: 1;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+    transition: opacity 0.18s ease;
+    z-index: 20;
 }
 
 .sems-sidebar.is-collapsed .sems-main-nav__item:hover::after,
 .sems-sidebar.is-collapsed .sems-shortcuts__item:hover::after {
-    opacity: 0;
+    opacity: 1;
+    visibility: visible;
 }
 
 .sems-sidebar.is-collapsed .sems-shortcuts {
-    margin-bottom: 230px;
+    margin-bottom: 32px;
 }
 
 .sems-sidebar.is-collapsed .sems-language-btn,
 .sems-sidebar.is-collapsed .sems-language-switcher .trp-ls-shortcode-current-language > a {
-    min-width: 0;
+    padding-left: 7px;
+    padding-right: 7px;
+    min-width: 32px;
+    justify-content: center;
 }
 
 .sems-sidebar.is-collapsed .sems-language-switcher .trp-ls-shortcode-current-language > a img {
@@ -427,5 +406,5 @@
 .sems-sidebar.is-collapsed .sems-language-switcher .trp-ls-shortcode-current-language > a::before,
 .sems-sidebar.is-collapsed .sems-language-switcher .trp-ls-shortcode-current-language > a i,
 .sems-sidebar.is-collapsed .sems-language-switcher .trp-ls-shortcode-current-language > a svg {
-    display: inline-flex !important;
+    display: none !important;
 }
