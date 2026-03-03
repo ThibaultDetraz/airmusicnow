@@ -9,6 +9,8 @@ Current plugin version: **1.1.0**
 - Category: **General**
 - Fixed design width: `241px`
 - Registration: supports both modern and legacy Elementor widget registration hooks
+- Controls: logo image/text, main menu repeater (label/link/icon/active), shortcut repeater (label/link/icon/style), footer links
+- Language area: integrates with TranslatePress switcher automatically when plugin is active
 
 ## Install
 1. Zip the folder `spotify-elementor-sidebar-plugin`.
