@@ -232,13 +232,22 @@
     margin-top: auto;
 }
 
-.sems-language-switcher .trp-language-switcher,
-.sems-language-switcher .trp-ls-shortcode-current-language {
+.sems-sidebar .sems-language-switcher .trp-language-switcher,
+.sems-sidebar .sems-language-switcher .trp-ls-shortcode-current-language {
     width: fit-content !important;
     min-width: 0 !important;
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
 }
 
-.sems-language-switcher .trp-ls-shortcode-current-language > a {
+.sems-sidebar .sems-language-switcher .trp-language-switcher > div {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+}
+
+.sems-sidebar .sems-language-switcher .trp-ls-shortcode-current-language > a {
     background: transparent !important;
     border: 1px solid #727272 !important;
     border-radius: 999px !important;
@@ -253,31 +262,41 @@
     font-weight: 700 !important;
     line-height: 1 !important;
     box-shadow: none !important;
+    background-image: none !important;
 }
 
-.sems-language-switcher .trp-ls-shortcode-current-language > a img {
+.sems-sidebar .sems-language-switcher .trp-ls-shortcode-current-language > a::after {
+    display: none !important;
+}
+
+.sems-sidebar .sems-language-switcher .trp-ls-shortcode-current-language > a img {
     width: 16px !important;
     height: 16px !important;
     object-fit: cover;
     border-radius: 50%;
 }
 
-.sems-language-switcher .trp-ls-shortcode-language {
+.sems-sidebar .sems-language-switcher .trp-ls-shortcode-language {
     background: #121212 !important;
     border: 1px solid #727272 !important;
     border-radius: 8px !important;
     margin-top: 8px !important;
     min-width: 150px !important;
+    padding: 4px 0 !important;
+    box-shadow: none !important;
 }
 
-.sems-language-switcher .trp-ls-shortcode-language a {
+.sems-sidebar .sems-language-switcher .trp-ls-shortcode-language a {
     color: #fff !important;
     text-decoration: none !important;
     font-size: 13px !important;
     line-height: 1.4 !important;
+    padding: 8px 12px !important;
+    background: transparent !important;
+    border: 0 !important;
 }
 
-.sems-language-switcher .trp-ls-shortcode-language a:hover {
+.sems-sidebar .sems-language-switcher .trp-ls-shortcode-language a:hover {
     background: #1c1c1c !important;
 }
 
