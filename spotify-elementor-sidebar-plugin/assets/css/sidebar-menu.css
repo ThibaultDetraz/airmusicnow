@@ -378,7 +378,6 @@
 
 .sems-sidebar.is-collapsed .sems-main-nav__item,
 .sems-sidebar.is-collapsed .sems-shortcuts__item {
-    position: relative;
     justify-content: flex-start;
     gap: 16px;
 }
@@ -402,23 +401,7 @@
 
 .sems-sidebar.is-collapsed .sems-main-nav__item::after,
 .sems-sidebar.is-collapsed .sems-shortcuts__item::after {
-    content: attr(data-tooltip);
-    position: absolute;
-    left: calc(100% + 10px);
-    top: 50%;
-    transform: translateY(-50%);
-    background: #1b1b1b;
-    color: #fff;
-    border: 1px solid #2f2f2f;
-    border-radius: 6px;
-    padding: 6px 10px;
-    font-size: 12px;
-    line-height: 1;
-    white-space: nowrap;
-    opacity: 1;
-    pointer-events: none;
-    visibility: visible;
-    z-index: 20;
+    content: none;
 }
 
 .sems-sidebar.is-collapsed .sems-shortcuts {
