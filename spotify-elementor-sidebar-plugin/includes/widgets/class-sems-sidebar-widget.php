@@ -433,12 +433,25 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
         $this->add_responsive_control(
             'sidebar_width',
             [
-                'label' => esc_html__('Width', 'spotify-elementor-sidebar-menu'),
+                'label' => esc_html__('Open Width', 'spotify-elementor-sidebar-menu'),
                 'type' => \Elementor\Controls_Manager::SLIDER,
                 'size_units' => ['px'],
                 'range' => ['px' => ['min' => 180, 'max' => 420]],
                 'selectors' => [
                     '{{WRAPPER}} .sems-sidebar' => 'width: {{SIZE}}{{UNIT}};',
+                ],
+            ]
+        );
+
+        $this->add_responsive_control(
+            'sidebar_closed_width',
+            [
+                'label' => esc_html__('Closed Width', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::SLIDER,
+                'size_units' => ['px'],
+                'range' => ['px' => ['min' => 56, 'max' => 220]],
+                'selectors' => [
+                    '{{WRAPPER}} .sems-sidebar.is-collapsed' => 'width: {{SIZE}}{{UNIT}};',
                 ],
             ]
         );
@@ -780,6 +793,32 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
                 'selectors' => [
                     '{{WRAPPER}} .sems-sidebar__toggle svg' => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}};',
                     '{{WRAPPER}} .sems-sidebar__toggle i' => 'font-size: {{SIZE}}{{UNIT}};',
+                ],
+            ]
+        );
+
+        $this->add_responsive_control(
+            'toggle_position_top',
+            [
+                'label' => esc_html__('Top Offset', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::SLIDER,
+                'size_units' => ['px'],
+                'range' => ['px' => ['min' => 0, 'max' => 120]],
+                'selectors' => [
+                    '{{WRAPPER}} .sems-sidebar__toggle' => 'top: {{SIZE}}{{UNIT}};',
+                ],
+            ]
+        );
+
+        $this->add_responsive_control(
+            'toggle_position_right',
+            [
+                'label' => esc_html__('Right Offset', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::SLIDER,
+                'size_units' => ['px'],
+                'range' => ['px' => ['min' => 0, 'max' => 120]],
+                'selectors' => [
+                    '{{WRAPPER}} .sems-sidebar__toggle' => 'right: {{SIZE}}{{UNIT}};',
                 ],
             ]
         );
