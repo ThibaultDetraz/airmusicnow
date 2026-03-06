@@ -862,9 +862,7 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
         </aside>
         <?php
 
-        if ($enable_toggle) {
-            $this->render_toggle_script($settings);
-        }
+        $this->render_toggle_script($settings);
     }
 
     private function render_toggle_button(bool $collapsed, array $settings): void {
@@ -1126,13 +1124,31 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
                 if (!sidebar || !sidebar.classList.contains('sems-sidebar')) {
                     return;
                 }
+                var inner = sidebar.querySelector('.sems-sidebar__inner');
                 var button = sidebar.querySelector('.sems-sidebar__toggle');
-                if (!button) {
-                    return;
-                }
 
                 var autoCloseMobile = <?php echo $auto_close_mobile ? 'true' : 'false'; ?>;
                 var mobileQuery = window.matchMedia('(max-width: 767px)');
+
+                var syncSidebarHeight = function () {
+                    var body = document.body;
+                    var doc = document.documentElement;
+                    var pageHeight = Math.max(
+                        body ? body.scrollHeight : 0,
+                        body ? body.offsetHeight : 0,
+                        doc ? doc.scrollHeight : 0,
+                        doc ? doc.offsetHeight : 0,
+                        doc ? doc.clientHeight : 0
+                    );
+
+                    if (pageHeight > 0) {
+                        sidebar.style.height = pageHeight + 'px';
+                        sidebar.style.minHeight = pageHeight + 'px';
+                        if (inner) {
+                            inner.style.minHeight = pageHeight + 'px';
+                        }
+                    }
+                };
 
                 var tooltip = document.getElementById('sems-floating-tooltip');
                 if (!tooltip) {
@@ -1171,7 +1187,9 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
 
                 var collapseSidebar = function () {
                     sidebar.classList.add('is-collapsed');
-                    button.setAttribute('aria-expanded', 'false');
+                    if (button) {
+                        button.setAttribute('aria-expanded', 'false');
+                    }
                     hideTooltip();
                 };
 
@@ -1212,13 +1230,23 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
                     });
                 });
 
-                button.addEventListener('click', function () {
-                    sidebar.classList.toggle('is-collapsed');
-                    button.setAttribute('aria-expanded', sidebar.classList.contains('is-collapsed') ? 'false' : 'true');
-                    hideTooltip();
-                });
+                if (button) {
+                    button.addEventListener('click', function () {
+                        sidebar.classList.toggle('is-collapsed');
+                        button.setAttribute('aria-expanded', sidebar.classList.contains('is-collapsed') ? 'false' : 'true');
+                        hideTooltip();
+                    });
+                }
 
+                syncSidebarHeight();
                 applyMobileAutoCloseState();
+
+                if (window.requestAnimationFrame) {
+                    window.requestAnimationFrame(syncSidebarHeight);
+                }
+                window.setTimeout(syncSidebarHeight, 250);
+                window.addEventListener('load', syncSidebarHeight);
+                window.addEventListener('resize', syncSidebarHeight);
 
                 if (mobileQuery.addEventListener) {
                     mobileQuery.addEventListener('change', applyMobileAutoCloseState);
