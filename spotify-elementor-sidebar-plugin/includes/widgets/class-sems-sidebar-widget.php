@@ -835,10 +835,16 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
         if ($collapsed) {
             $sidebar_classes .= ' is-collapsed';
         }
+        if ($enable_toggle) {
+            $sidebar_classes .= ' has-mobile-launcher';
+        }
 
         $sidebar_id = 'sems-sidebar-' . esc_attr($this->get_id());
 
         ?>
+        <?php if ($enable_toggle) : ?>
+            <?php $this->render_mobile_launcher($settings, $sidebar_id); ?>
+        <?php endif; ?>
         <aside id="<?php echo esc_attr($sidebar_id); ?>" class="<?php echo esc_attr($sidebar_classes); ?>" aria-label="Sidebar menu">
             <div class="sems-sidebar__inner">
                 <?php if ($enable_toggle) : ?>
@@ -862,9 +868,7 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
         </aside>
         <?php
 
-        if ($enable_toggle) {
-            $this->render_toggle_script($settings);
-        }
+        $this->render_toggle_script($settings);
     }
 
     private function render_toggle_button(bool $collapsed, array $settings): void {
@@ -880,6 +884,32 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
         \Elementor\Icons_Manager::render_icon($open_icon, ['aria-hidden' => 'true']);
         echo '</span>';
         echo '<span class="screen-reader-text">' . esc_html__('Toggle sidebar menu', 'spotify-elementor-sidebar-menu') . '</span>';
+        echo '</button>';
+    }
+
+    private function render_mobile_launcher(array $settings, string $sidebar_id): void {
+        $launcher_logo = '';
+        if (!empty($settings['brand_logo']['url'])) {
+            $launcher_logo = $settings['brand_logo']['url'];
+        } elseif (!empty($settings['brand_logo_collapsed']['url'])) {
+            $launcher_logo = $settings['brand_logo_collapsed']['url'];
+        }
+
+        $open_icon = $settings['toggle_open_icon'] ?? ['value' => 'eicon-menu-bar', 'library' => 'eicons'];
+
+        echo '<button type="button" class="sems-mobile-launcher" data-target="' . esc_attr($sidebar_id) . '" aria-expanded="false" aria-label="' . esc_attr__('Open sidebar menu', 'spotify-elementor-sidebar-menu') . '">';
+        echo '<span class="sems-mobile-launcher__logo" aria-hidden="true">';
+
+        if (!empty($launcher_logo)) {
+            echo '<img src="' . esc_url($launcher_logo) . '" alt="Logo" />';
+        } else {
+            echo '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="12" cy="12" r="12" fill="currentColor" /><path d="M6.1 8.9c3.7-1.1 8-0.8 11.5 1 .4.2.6.7.4 1.1-.2.4-.7.6-1.1.4-3.1-1.6-7-1.9-10.4-.9-.4.1-.9-.1-1-.6-.1-.4.1-.9.6-1z" fill="#000"/><path d="M6.9 11.8c3-0.9 6.5-0.7 9.2.7.4.2.5.6.3 1-.2.4-.6.5-1 .3-2.4-1.2-5.4-1.4-8.1-.6-.4.1-.8-.1-.9-.5-.1-.4.1-.8.5-.9z" fill="#000"/><path d="M7.7 14.5c2.3-.7 4.8-.5 6.9.5.3.2.4.5.3.8-.2.3-.5.4-.8.3-1.8-.9-4-.9-5.9-.4-.3.1-.7-.1-.8-.4-.1-.3.1-.7.4-.8z" fill="#000"/></svg>';
+        }
+
+        echo '</span>';
+        echo '<span class="sems-mobile-launcher__icon" aria-hidden="true">';
+        \Elementor\Icons_Manager::render_icon($open_icon, ['aria-hidden' => 'true']);
+        echo '</span>';
         echo '</button>';
     }
 
@@ -1115,6 +1145,7 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
 
     private function render_toggle_script(array $settings): void {
         $auto_close_mobile = isset($settings['auto_close_mobile']) && 'yes' === $settings['auto_close_mobile'];
+        $enable_toggle = isset($settings['enable_menu_toggle']) && 'yes' === $settings['enable_menu_toggle'];
         ?>
         <script>
             (function () {
@@ -1126,13 +1157,33 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
                 if (!sidebar || !sidebar.classList.contains('sems-sidebar')) {
                     return;
                 }
+                var inner = sidebar.querySelector('.sems-sidebar__inner');
                 var button = sidebar.querySelector('.sems-sidebar__toggle');
-                if (!button) {
-                    return;
-                }
+                var launcher = document.querySelector('.sems-mobile-launcher[data-target="' + sidebar.id + '"]');
 
                 var autoCloseMobile = <?php echo $auto_close_mobile ? 'true' : 'false'; ?>;
+                var hasToggle = <?php echo $enable_toggle ? 'true' : 'false'; ?>;
                 var mobileQuery = window.matchMedia('(max-width: 767px)');
+
+                var syncSidebarHeight = function () {
+                    var body = document.body;
+                    var doc = document.documentElement;
+                    var pageHeight = Math.max(
+                        body ? body.scrollHeight : 0,
+                        body ? body.offsetHeight : 0,
+                        doc ? doc.scrollHeight : 0,
+                        doc ? doc.offsetHeight : 0,
+                        doc ? doc.clientHeight : 0
+                    );
+
+                    if (pageHeight > 0) {
+                        sidebar.style.height = pageHeight + 'px';
+                        sidebar.style.minHeight = pageHeight + 'px';
+                        if (inner) {
+                            inner.style.minHeight = pageHeight + 'px';
+                        }
+                    }
+                };
 
                 var tooltip = document.getElementById('sems-floating-tooltip');
                 if (!tooltip) {
@@ -1151,7 +1202,7 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
                 };
 
                 var showTooltip = function (target) {
-                    if (!sidebar.classList.contains('is-collapsed')) {
+                    if (!sidebar.classList.contains('is-collapsed') || (mobileQuery.matches && sidebar.classList.contains('is-mobile-open'))) {
                         return;
                     }
 
@@ -1169,15 +1220,56 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
                     tooltip.classList.remove('is-visible');
                 };
 
-                var collapseSidebar = function () {
-                    sidebar.classList.add('is-collapsed');
-                    button.setAttribute('aria-expanded', 'false');
-                    hideTooltip();
+                var updateToggleState = function () {
+                    if (!button) {
+                        return;
+                    }
+
+                    var expanded = mobileQuery.matches
+                        ? sidebar.classList.contains('is-mobile-open')
+                        : !sidebar.classList.contains('is-collapsed');
+
+                    button.setAttribute('aria-expanded', expanded ? 'true' : 'false');
                 };
 
-                var applyMobileAutoCloseState = function () {
-                    if (autoCloseMobile && mobileQuery.matches) {
-                        collapseSidebar();
+                var updateLauncherState = function () {
+                    if (!launcher) {
+                        return;
+                    }
+
+                    var shouldShow = hasToggle && mobileQuery.matches && !sidebar.classList.contains('is-mobile-open');
+                    launcher.classList.toggle('is-hidden', !shouldShow);
+                    launcher.setAttribute('aria-expanded', shouldShow ? 'false' : 'true');
+                };
+
+                var hideSidebarMobile = function () {
+                    sidebar.classList.remove('is-mobile-open');
+                    sidebar.classList.add('is-collapsed');
+                    hideTooltip();
+                    updateToggleState();
+                    updateLauncherState();
+                };
+
+                var openSidebarMobile = function () {
+                    sidebar.classList.add('is-mobile-open');
+                    sidebar.classList.remove('is-collapsed');
+                    hideTooltip();
+                    updateToggleState();
+                    updateLauncherState();
+                };
+
+                var applyMobileDefaultState = function () {
+                    if (!hasToggle) {
+                        sidebar.classList.remove('is-mobile-open');
+                        return;
+                    }
+
+                    if (mobileQuery.matches) {
+                        hideSidebarMobile();
+                    } else {
+                        sidebar.classList.remove('is-mobile-open');
+                        updateToggleState();
+                        updateLauncherState();
                     }
                 };
 
@@ -1198,7 +1290,7 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
 
                     target.addEventListener('click', function () {
                         if (autoCloseMobile && mobileQuery.matches) {
-                            collapseSidebar();
+                            hideSidebarMobile();
                         }
                     });
                 });
@@ -1207,23 +1299,60 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
                 extraCloseTargets.forEach(function (target) {
                     target.addEventListener('click', function () {
                         if (autoCloseMobile && mobileQuery.matches) {
-                            collapseSidebar();
+                            hideSidebarMobile();
                         }
                     });
                 });
 
-                button.addEventListener('click', function () {
-                    sidebar.classList.toggle('is-collapsed');
-                    button.setAttribute('aria-expanded', sidebar.classList.contains('is-collapsed') ? 'false' : 'true');
-                    hideTooltip();
+                if (button) {
+                    button.addEventListener('click', function () {
+                        if (mobileQuery.matches) {
+                            if (sidebar.classList.contains('is-mobile-open')) {
+                                hideSidebarMobile();
+                            } else {
+                                openSidebarMobile();
+                            }
+                            return;
+                        }
+
+                        sidebar.classList.toggle('is-collapsed');
+                        hideTooltip();
+                        updateToggleState();
+                    });
+                }
+
+                if (launcher) {
+                    launcher.addEventListener('click', function () {
+                        openSidebarMobile();
+                    });
+                }
+
+                syncSidebarHeight();
+                applyMobileDefaultState();
+                updateToggleState();
+                updateLauncherState();
+
+                if (window.requestAnimationFrame) {
+                    window.requestAnimationFrame(syncSidebarHeight);
+                }
+                window.setTimeout(syncSidebarHeight, 250);
+                window.addEventListener('load', syncSidebarHeight);
+                window.addEventListener('resize', function () {
+                    syncSidebarHeight();
+                    updateToggleState();
+                    updateLauncherState();
                 });
 
-                applyMobileAutoCloseState();
-
                 if (mobileQuery.addEventListener) {
-                    mobileQuery.addEventListener('change', applyMobileAutoCloseState);
+                    mobileQuery.addEventListener('change', function () {
+                        applyMobileDefaultState();
+                        syncSidebarHeight();
+                    });
                 } else if (mobileQuery.addListener) {
-                    mobileQuery.addListener(applyMobileAutoCloseState);
+                    mobileQuery.addListener(function () {
+                        applyMobileDefaultState();
+                        syncSidebarHeight();
+                    });
                 }
             })();
         </script>
