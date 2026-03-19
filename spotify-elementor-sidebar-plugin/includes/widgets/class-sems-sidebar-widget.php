@@ -1035,16 +1035,10 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
         if ($collapsed) {
             $sidebar_classes .= ' is-collapsed';
         }
-        if ($enable_toggle) {
-            $sidebar_classes .= ' has-mobile-launcher';
-        }
 
         $sidebar_id = 'sems-sidebar-' . esc_attr($this->get_id());
 
         ?>
-        <?php if ($enable_toggle) : ?>
-            <?php $this->render_mobile_launcher($settings, $sidebar_id); ?>
-        <?php endif; ?>
         <aside id="<?php echo esc_attr($sidebar_id); ?>" class="<?php echo esc_attr($sidebar_classes); ?>" aria-label="Sidebar menu">
             <div class="sems-sidebar__inner">
                 <?php if ($enable_toggle) : ?>
@@ -1070,7 +1064,7 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
 
         $this->render_mobile_floating_nav($settings);
 
-        $this->render_toggle_script($settings);
+        $this->render_toggle_script($settings, $sidebar_id);
     }
 
     private function render_toggle_button(bool $collapsed, array $settings): void {
@@ -1402,44 +1396,31 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
         echo '<a ' . $this->get_render_attribute_string($key) . '>';
     }
 
-    private function render_toggle_script(array $settings): void {
+    private function render_toggle_script(array $settings, string $sidebar_id): void {
         $auto_close_mobile = isset($settings['auto_close_mobile']) && 'yes' === $settings['auto_close_mobile'];
         $enable_toggle = isset($settings['enable_menu_toggle']) && 'yes' === $settings['enable_menu_toggle'];
         ?>
         <script>
             (function () {
-                var script = document.currentScript;
-                if (!script) {
-                    return;
-                }
-                var sidebar = script.previousElementSibling;
+                var sidebar = document.getElementById('<?php echo esc_js($sidebar_id); ?>');
                 if (!sidebar || !sidebar.classList.contains('sems-sidebar')) {
                     return;
                 }
                 var inner = sidebar.querySelector('.sems-sidebar__inner');
                 var button = sidebar.querySelector('.sems-sidebar__toggle');
-                var launcher = document.querySelector('.sems-mobile-launcher[data-target="' + sidebar.id + '"]');
 
                 var autoCloseMobile = <?php echo $auto_close_mobile ? 'true' : 'false'; ?>;
                 var hasToggle = <?php echo $enable_toggle ? 'true' : 'false'; ?>;
                 var mobileQuery = window.matchMedia('(max-width: 767px)');
 
                 var syncSidebarHeight = function () {
-                    var body = document.body;
-                    var doc = document.documentElement;
-                    var pageHeight = Math.max(
-                        body ? body.scrollHeight : 0,
-                        body ? body.offsetHeight : 0,
-                        doc ? doc.scrollHeight : 0,
-                        doc ? doc.offsetHeight : 0,
-                        doc ? doc.clientHeight : 0
-                    );
+                    var viewportHeight = window.innerHeight || document.documentElement.clientHeight || 0;
 
-                    if (pageHeight > 0) {
-                        sidebar.style.height = pageHeight + 'px';
-                        sidebar.style.minHeight = pageHeight + 'px';
+                    if (viewportHeight > 0) {
+                        sidebar.style.height = viewportHeight + 'px';
+                        sidebar.style.minHeight = viewportHeight + 'px';
                         if (inner) {
-                            inner.style.minHeight = pageHeight + 'px';
+                            inner.style.minHeight = viewportHeight + 'px';
                         }
                     }
                 };
@@ -1461,7 +1442,7 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
                 };
 
                 var showTooltip = function (target) {
-                    if (!sidebar.classList.contains('is-collapsed') || (mobileQuery.matches && sidebar.classList.contains('is-mobile-open'))) {
+                    if (!sidebar.classList.contains('is-collapsed')) {
                         return;
                     }
 
@@ -1484,51 +1465,23 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
                         return;
                     }
 
-                    var expanded = mobileQuery.matches
-                        ? sidebar.classList.contains('is-mobile-open')
-                        : !sidebar.classList.contains('is-collapsed');
-
+                    var expanded = !sidebar.classList.contains('is-collapsed');
                     button.setAttribute('aria-expanded', expanded ? 'true' : 'false');
                 };
 
-                var updateLauncherState = function () {
-                    if (!launcher) {
-                        return;
-                    }
-
-                    var shouldShow = hasToggle && mobileQuery.matches && !sidebar.classList.contains('is-mobile-open');
-                    launcher.classList.toggle('is-hidden', !shouldShow);
-                    launcher.setAttribute('aria-expanded', shouldShow ? 'false' : 'true');
-                };
-
-                var hideSidebarMobile = function () {
-                    sidebar.classList.remove('is-mobile-open');
+                var collapseSidebar = function () {
                     sidebar.classList.add('is-collapsed');
                     hideTooltip();
                     updateToggleState();
-                    updateLauncherState();
                 };
 
-                var openSidebarMobile = function () {
-                    sidebar.classList.add('is-mobile-open');
-                    sidebar.classList.remove('is-collapsed');
-                    hideTooltip();
-                    updateToggleState();
-                    updateLauncherState();
-                };
-
-                var applyMobileDefaultState = function () {
+                var applyMobileAutoCloseState = function () {
                     if (!hasToggle) {
-                        sidebar.classList.remove('is-mobile-open');
                         return;
                     }
 
-                    if (mobileQuery.matches) {
-                        hideSidebarMobile();
-                    } else {
-                        sidebar.classList.remove('is-mobile-open');
-                        updateToggleState();
-                        updateLauncherState();
+                    if (autoCloseMobile && mobileQuery.matches) {
+                        collapseSidebar();
                     }
                 };
 
@@ -1549,7 +1502,7 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
 
                     target.addEventListener('click', function () {
                         if (autoCloseMobile && mobileQuery.matches) {
-                            hideSidebarMobile();
+                            collapseSidebar();
                         }
                     });
                 });
@@ -1558,38 +1511,22 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
                 extraCloseTargets.forEach(function (target) {
                     target.addEventListener('click', function () {
                         if (autoCloseMobile && mobileQuery.matches) {
-                            hideSidebarMobile();
+                            collapseSidebar();
                         }
                     });
                 });
 
                 if (button) {
                     button.addEventListener('click', function () {
-                        if (mobileQuery.matches) {
-                            if (sidebar.classList.contains('is-mobile-open')) {
-                                hideSidebarMobile();
-                            } else {
-                                openSidebarMobile();
-                            }
-                            return;
-                        }
-
                         sidebar.classList.toggle('is-collapsed');
                         hideTooltip();
                         updateToggleState();
                     });
                 }
 
-                if (launcher) {
-                    launcher.addEventListener('click', function () {
-                        openSidebarMobile();
-                    });
-                }
-
                 syncSidebarHeight();
-                applyMobileDefaultState();
+                applyMobileAutoCloseState();
                 updateToggleState();
-                updateLauncherState();
 
                 if (window.requestAnimationFrame) {
                     window.requestAnimationFrame(syncSidebarHeight);
@@ -1599,17 +1536,16 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
                 window.addEventListener('resize', function () {
                     syncSidebarHeight();
                     updateToggleState();
-                    updateLauncherState();
                 });
 
                 if (mobileQuery.addEventListener) {
                     mobileQuery.addEventListener('change', function () {
-                        applyMobileDefaultState();
+                        applyMobileAutoCloseState();
                         syncSidebarHeight();
                     });
                 } else if (mobileQuery.addListener) {
                     mobileQuery.addListener(function () {
-                        applyMobileDefaultState();
+                        applyMobileAutoCloseState();
                         syncSidebarHeight();
                     });
                 }
