@@ -11,6 +11,8 @@ Current plugin version: **1.1.0**
 - Registration: supports both modern and legacy Elementor widget registration hooks
 - Controls: logo image, main menu repeater (label/link/icon/active), shortcut repeater (label/link/icon/style), footer links
 - Language area: integrates with TranslatePress switcher automatically when plugin is active
+- Mobile floating buttons: Home, Your Library, Create Playlists, Favorite (mobile-only bottom glass bar)
+- Style controllers: floating button container glass effect, icon/text, hover, radius, blur, and button padding
 
 ## Install
 1. Zip the folder `spotify-elementor-sidebar-plugin`.

@@ -29,6 +29,7 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
         $this->register_brand_controls();
         $this->register_main_menu_controls();
         $this->register_shortcut_controls();
+        $this->register_mobile_floating_controls();
         $this->register_footer_controls();
         $this->register_language_controls();
         $this->register_toggle_controls();
@@ -264,6 +265,74 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
         $this->end_controls_section();
     }
 
+    private function register_mobile_floating_controls(): void {
+        $this->start_controls_section(
+            'section_mobile_floating',
+            [
+                'label' => esc_html__('Mobile Floating Buttons', 'spotify-elementor-sidebar-menu'),
+                'tab' => \Elementor\Controls_Manager::TAB_CONTENT,
+            ]
+        );
+
+        $this->add_control(
+            'enable_mobile_floating_buttons',
+            [
+                'label' => esc_html__('Enable Mobile Floating Buttons', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::SWITCHER,
+                'label_on' => esc_html__('Yes', 'spotify-elementor-sidebar-menu'),
+                'label_off' => esc_html__('No', 'spotify-elementor-sidebar-menu'),
+                'return_value' => 'yes',
+                'default' => 'yes',
+            ]
+        );
+
+        $this->add_control(
+            'mobile_floating_home_url',
+            [
+                'label' => esc_html__('Home Link', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::URL,
+                'placeholder' => 'https://example.com',
+                'default' => ['url' => '#'],
+                'condition' => ['enable_mobile_floating_buttons' => 'yes'],
+            ]
+        );
+
+        $this->add_control(
+            'mobile_floating_library_url',
+            [
+                'label' => esc_html__('Your Library Link', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::URL,
+                'placeholder' => 'https://example.com',
+                'default' => ['url' => '#'],
+                'condition' => ['enable_mobile_floating_buttons' => 'yes'],
+            ]
+        );
+
+        $this->add_control(
+            'mobile_floating_create_url',
+            [
+                'label' => esc_html__('Create Playlists Link', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::URL,
+                'placeholder' => 'https://example.com',
+                'default' => ['url' => '#'],
+                'condition' => ['enable_mobile_floating_buttons' => 'yes'],
+            ]
+        );
+
+        $this->add_control(
+            'mobile_floating_favorite_url',
+            [
+                'label' => esc_html__('Favorite Link', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::URL,
+                'placeholder' => 'https://example.com',
+                'default' => ['url' => '#'],
+                'condition' => ['enable_mobile_floating_buttons' => 'yes'],
+            ]
+        );
+
+        $this->end_controls_section();
+    }
+
     private function register_language_controls(): void {
         $this->start_controls_section(
             'section_language',
@@ -408,6 +477,7 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
         $this->register_style_footer_controls();
         $this->register_style_language_controls();
         $this->register_style_toggle_controls();
+        $this->register_style_mobile_floating_controls();
     }
 
     private function register_style_sidebar_controls(): void {
@@ -826,6 +896,136 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
         $this->end_controls_section();
     }
 
+    private function register_style_mobile_floating_controls(): void {
+        $this->start_controls_section(
+            'style_mobile_floating_buttons',
+            [
+                'label' => esc_html__('Mobile Floating Buttons', 'spotify-elementor-sidebar-menu'),
+                'tab' => \Elementor\Controls_Manager::TAB_STYLE,
+                'condition' => [
+                    'enable_mobile_floating_buttons' => 'yes',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'mobile_floating_bg_color',
+            [
+                'label' => esc_html__('Container Background', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .sems-mobile-floating-nav' => 'background: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'mobile_floating_border_color',
+            [
+                'label' => esc_html__('Container Border Color', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .sems-mobile-floating-nav' => 'border-color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_responsive_control(
+            'mobile_floating_blur',
+            [
+                'label' => esc_html__('Glass Blur', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::SLIDER,
+                'size_units' => ['px'],
+                'range' => ['px' => ['min' => 0, 'max' => 40]],
+                'selectors' => [
+                    '{{WRAPPER}} .sems-mobile-floating-nav' => '-webkit-backdrop-filter: blur({{SIZE}}{{UNIT}}) saturate(170%); backdrop-filter: blur({{SIZE}}{{UNIT}}) saturate(170%);',
+                ],
+            ]
+        );
+
+        $this->add_responsive_control(
+            'mobile_floating_radius',
+            [
+                'label' => esc_html__('Container Radius', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::SLIDER,
+                'size_units' => ['px'],
+                'range' => ['px' => ['min' => 0, 'max' => 50]],
+                'selectors' => [
+                    '{{WRAPPER}} .sems-mobile-floating-nav' => 'border-radius: {{SIZE}}{{UNIT}};',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'mobile_floating_item_color',
+            [
+                'label' => esc_html__('Button Color', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .sems-mobile-floating-nav__item' => 'color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'mobile_floating_item_hover_color',
+            [
+                'label' => esc_html__('Button Hover Color', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .sems-mobile-floating-nav__item:hover, {{WRAPPER}} .sems-mobile-floating-nav__item:focus-visible' => 'color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'mobile_floating_item_hover_bg',
+            [
+                'label' => esc_html__('Button Hover Background', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .sems-mobile-floating-nav__item:hover, {{WRAPPER}} .sems-mobile-floating-nav__item:focus-visible' => 'background: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_group_control(
+            \Elementor\Group_Control_Typography::get_type(),
+            [
+                'name' => 'mobile_floating_label_typography',
+                'selector' => '{{WRAPPER}} .sems-mobile-floating-nav__label',
+            ]
+        );
+
+        $this->add_responsive_control(
+            'mobile_floating_icon_size',
+            [
+                'label' => esc_html__('Icon Size', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::SLIDER,
+                'size_units' => ['px'],
+                'range' => ['px' => ['min' => 10, 'max' => 40]],
+                'selectors' => [
+                    '{{WRAPPER}} .sems-mobile-floating-nav__icon svg' => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}};',
+                    '{{WRAPPER}} .sems-mobile-floating-nav__icon i' => 'font-size: {{SIZE}}{{UNIT}};',
+                ],
+            ]
+        );
+
+        $this->add_responsive_control(
+            'mobile_floating_item_padding',
+            [
+                'label' => esc_html__('Button Padding', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::DIMENSIONS,
+                'size_units' => ['px'],
+                'selectors' => [
+                    '{{WRAPPER}} .sems-mobile-floating-nav__item' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+                ],
+            ]
+        );
+
+        $this->end_controls_section();
+    }
+
     protected function render(): void {
         $settings = $this->get_settings_for_display();
         $collapsed = isset($settings['collapsed_default']) && 'yes' === $settings['collapsed_default'];
@@ -835,10 +1035,16 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
         if ($collapsed) {
             $sidebar_classes .= ' is-collapsed';
         }
+        if ($enable_toggle) {
+            $sidebar_classes .= ' has-mobile-launcher';
+        }
 
         $sidebar_id = 'sems-sidebar-' . esc_attr($this->get_id());
 
         ?>
+        <?php if ($enable_toggle) : ?>
+            <?php $this->render_mobile_launcher($settings, $sidebar_id); ?>
+        <?php endif; ?>
         <aside id="<?php echo esc_attr($sidebar_id); ?>" class="<?php echo esc_attr($sidebar_classes); ?>" aria-label="Sidebar menu">
             <div class="sems-sidebar__inner">
                 <?php if ($enable_toggle) : ?>
@@ -862,9 +1068,9 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
         </aside>
         <?php
 
-        if ($enable_toggle) {
-            $this->render_toggle_script($settings);
-        }
+        $this->render_mobile_floating_nav($settings);
+
+        $this->render_toggle_script($settings);
     }
 
     private function render_toggle_button(bool $collapsed, array $settings): void {
@@ -881,6 +1087,89 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
         echo '</span>';
         echo '<span class="screen-reader-text">' . esc_html__('Toggle sidebar menu', 'spotify-elementor-sidebar-menu') . '</span>';
         echo '</button>';
+    }
+
+    private function render_mobile_launcher(array $settings, string $sidebar_id): void {
+        $launcher_logo = '';
+        if (!empty($settings['brand_logo']['url'])) {
+            $launcher_logo = $settings['brand_logo']['url'];
+        } elseif (!empty($settings['brand_logo_collapsed']['url'])) {
+            $launcher_logo = $settings['brand_logo_collapsed']['url'];
+        }
+
+        $open_icon = $settings['toggle_open_icon'] ?? ['value' => 'eicon-menu-bar', 'library' => 'eicons'];
+
+        echo '<button type="button" class="sems-mobile-launcher" data-target="' . esc_attr($sidebar_id) . '" aria-expanded="false" aria-label="' . esc_attr__('Open sidebar menu', 'spotify-elementor-sidebar-menu') . '">';
+        echo '<span class="sems-mobile-launcher__logo" aria-hidden="true">';
+
+        if (!empty($launcher_logo)) {
+            echo '<img src="' . esc_url($launcher_logo) . '" alt="Logo" />';
+        } else {
+            echo '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="12" cy="12" r="12" fill="currentColor" /><path d="M6.1 8.9c3.7-1.1 8-0.8 11.5 1 .4.2.6.7.4 1.1-.2.4-.7.6-1.1.4-3.1-1.6-7-1.9-10.4-.9-.4.1-.9-.1-1-.6-.1-.4.1-.9.6-1z" fill="#000"/><path d="M6.9 11.8c3-0.9 6.5-0.7 9.2.7.4.2.5.6.3 1-.2.4-.6.5-1 .3-2.4-1.2-5.4-1.4-8.1-.6-.4.1-.8-.1-.9-.5-.1-.4.1-.8.5-.9z" fill="#000"/><path d="M7.7 14.5c2.3-.7 4.8-.5 6.9.5.3.2.4.5.3.8-.2.3-.5.4-.8.3-1.8-.9-4-.9-5.9-.4-.3.1-.7-.1-.8-.4-.1-.3.1-.7.4-.8z" fill="#000"/></svg>';
+        }
+
+        echo '</span>';
+        echo '<span class="sems-mobile-launcher__icon" aria-hidden="true">';
+        \Elementor\Icons_Manager::render_icon($open_icon, ['aria-hidden' => 'true']);
+        echo '</span>';
+        echo '</button>';
+    }
+
+    private function render_mobile_floating_nav(array $settings): void {
+        if (!isset($settings['enable_mobile_floating_buttons']) || 'yes' !== $settings['enable_mobile_floating_buttons']) {
+            return;
+        }
+
+        $items = [
+            [
+                'label' => esc_html__('Home', 'spotify-elementor-sidebar-menu'),
+                'url' => $settings['mobile_floating_home_url'] ?? ['url' => '#'],
+                'icon' => $this->get_main_menu_fallback_icon(0),
+            ],
+            [
+                'label' => esc_html__('Your Library', 'spotify-elementor-sidebar-menu'),
+                'url' => $settings['mobile_floating_library_url'] ?? ['url' => '#'],
+                'icon' => $this->get_main_menu_fallback_icon(2),
+            ],
+            [
+                'label' => esc_html__('Create Playlists', 'spotify-elementor-sidebar-menu'),
+                'url' => $settings['mobile_floating_create_url'] ?? ['url' => '#'],
+                'icon' => $this->get_shortcut_fallback_icon('plus'),
+            ],
+            [
+                'label' => esc_html__('Favorite', 'spotify-elementor-sidebar-menu'),
+                'url' => $settings['mobile_floating_favorite_url'] ?? ['url' => '#'],
+                'icon' => $this->get_shortcut_fallback_icon('liked'),
+            ],
+        ];
+
+        echo '<nav class="sems-mobile-floating-nav" aria-label="' . esc_attr__('Mobile quick actions', 'spotify-elementor-sidebar-menu') . '">';
+        foreach ($items as $item) {
+            $this->render_mobile_floating_nav_item($item['label'], $item['url'], $item['icon']);
+        }
+        echo '</nav>';
+    }
+
+    private function render_mobile_floating_nav_item(string $label, array $url_settings, string $icon_markup): void {
+        $url = '#';
+        if (!empty($url_settings['url'])) {
+            $url = $url_settings['url'];
+        }
+
+        echo '<a class="sems-mobile-floating-nav__item" href="' . esc_url($url) . '"';
+
+        if (!empty($url_settings['is_external'])) {
+            echo ' target="_blank"';
+        }
+
+        if (!empty($url_settings['nofollow'])) {
+            echo ' rel="nofollow"';
+        }
+
+        echo '>';
+        echo '<span class="sems-mobile-floating-nav__icon" aria-hidden="true">' . $icon_markup . '</span>';
+        echo '<span class="sems-mobile-floating-nav__label">' . esc_html($label) . '</span>';
+        echo '</a>';
     }
 
     private function render_brand(array $settings): void {
@@ -1115,6 +1404,7 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
 
     private function render_toggle_script(array $settings): void {
         $auto_close_mobile = isset($settings['auto_close_mobile']) && 'yes' === $settings['auto_close_mobile'];
+        $enable_toggle = isset($settings['enable_menu_toggle']) && 'yes' === $settings['enable_menu_toggle'];
         ?>
         <script>
             (function () {
@@ -1126,13 +1416,33 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
                 if (!sidebar || !sidebar.classList.contains('sems-sidebar')) {
                     return;
                 }
+                var inner = sidebar.querySelector('.sems-sidebar__inner');
                 var button = sidebar.querySelector('.sems-sidebar__toggle');
-                if (!button) {
-                    return;
-                }
+                var launcher = document.querySelector('.sems-mobile-launcher[data-target="' + sidebar.id + '"]');
 
                 var autoCloseMobile = <?php echo $auto_close_mobile ? 'true' : 'false'; ?>;
+                var hasToggle = <?php echo $enable_toggle ? 'true' : 'false'; ?>;
                 var mobileQuery = window.matchMedia('(max-width: 767px)');
+
+                var syncSidebarHeight = function () {
+                    var body = document.body;
+                    var doc = document.documentElement;
+                    var pageHeight = Math.max(
+                        body ? body.scrollHeight : 0,
+                        body ? body.offsetHeight : 0,
+                        doc ? doc.scrollHeight : 0,
+                        doc ? doc.offsetHeight : 0,
+                        doc ? doc.clientHeight : 0
+                    );
+
+                    if (pageHeight > 0) {
+                        sidebar.style.height = pageHeight + 'px';
+                        sidebar.style.minHeight = pageHeight + 'px';
+                        if (inner) {
+                            inner.style.minHeight = pageHeight + 'px';
+                        }
+                    }
+                };
 
                 var tooltip = document.getElementById('sems-floating-tooltip');
                 if (!tooltip) {
@@ -1151,7 +1461,7 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
                 };
 
                 var showTooltip = function (target) {
-                    if (!sidebar.classList.contains('is-collapsed')) {
+                    if (!sidebar.classList.contains('is-collapsed') || (mobileQuery.matches && sidebar.classList.contains('is-mobile-open'))) {
                         return;
                     }
 
@@ -1169,15 +1479,56 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
                     tooltip.classList.remove('is-visible');
                 };
 
-                var collapseSidebar = function () {
-                    sidebar.classList.add('is-collapsed');
-                    button.setAttribute('aria-expanded', 'false');
-                    hideTooltip();
+                var updateToggleState = function () {
+                    if (!button) {
+                        return;
+                    }
+
+                    var expanded = mobileQuery.matches
+                        ? sidebar.classList.contains('is-mobile-open')
+                        : !sidebar.classList.contains('is-collapsed');
+
+                    button.setAttribute('aria-expanded', expanded ? 'true' : 'false');
                 };
 
-                var applyMobileAutoCloseState = function () {
-                    if (autoCloseMobile && mobileQuery.matches) {
-                        collapseSidebar();
+                var updateLauncherState = function () {
+                    if (!launcher) {
+                        return;
+                    }
+
+                    var shouldShow = hasToggle && mobileQuery.matches && !sidebar.classList.contains('is-mobile-open');
+                    launcher.classList.toggle('is-hidden', !shouldShow);
+                    launcher.setAttribute('aria-expanded', shouldShow ? 'false' : 'true');
+                };
+
+                var hideSidebarMobile = function () {
+                    sidebar.classList.remove('is-mobile-open');
+                    sidebar.classList.add('is-collapsed');
+                    hideTooltip();
+                    updateToggleState();
+                    updateLauncherState();
+                };
+
+                var openSidebarMobile = function () {
+                    sidebar.classList.add('is-mobile-open');
+                    sidebar.classList.remove('is-collapsed');
+                    hideTooltip();
+                    updateToggleState();
+                    updateLauncherState();
+                };
+
+                var applyMobileDefaultState = function () {
+                    if (!hasToggle) {
+                        sidebar.classList.remove('is-mobile-open');
+                        return;
+                    }
+
+                    if (mobileQuery.matches) {
+                        hideSidebarMobile();
+                    } else {
+                        sidebar.classList.remove('is-mobile-open');
+                        updateToggleState();
+                        updateLauncherState();
                     }
                 };
 
@@ -1198,7 +1549,7 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
 
                     target.addEventListener('click', function () {
                         if (autoCloseMobile && mobileQuery.matches) {
-                            collapseSidebar();
+                            hideSidebarMobile();
                         }
                     });
                 });
@@ -1207,23 +1558,60 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
                 extraCloseTargets.forEach(function (target) {
                     target.addEventListener('click', function () {
                         if (autoCloseMobile && mobileQuery.matches) {
-                            collapseSidebar();
+                            hideSidebarMobile();
                         }
                     });
                 });
 
-                button.addEventListener('click', function () {
-                    sidebar.classList.toggle('is-collapsed');
-                    button.setAttribute('aria-expanded', sidebar.classList.contains('is-collapsed') ? 'false' : 'true');
-                    hideTooltip();
+                if (button) {
+                    button.addEventListener('click', function () {
+                        if (mobileQuery.matches) {
+                            if (sidebar.classList.contains('is-mobile-open')) {
+                                hideSidebarMobile();
+                            } else {
+                                openSidebarMobile();
+                            }
+                            return;
+                        }
+
+                        sidebar.classList.toggle('is-collapsed');
+                        hideTooltip();
+                        updateToggleState();
+                    });
+                }
+
+                if (launcher) {
+                    launcher.addEventListener('click', function () {
+                        openSidebarMobile();
+                    });
+                }
+
+                syncSidebarHeight();
+                applyMobileDefaultState();
+                updateToggleState();
+                updateLauncherState();
+
+                if (window.requestAnimationFrame) {
+                    window.requestAnimationFrame(syncSidebarHeight);
+                }
+                window.setTimeout(syncSidebarHeight, 250);
+                window.addEventListener('load', syncSidebarHeight);
+                window.addEventListener('resize', function () {
+                    syncSidebarHeight();
+                    updateToggleState();
+                    updateLauncherState();
                 });
 
-                applyMobileAutoCloseState();
-
                 if (mobileQuery.addEventListener) {
-                    mobileQuery.addEventListener('change', applyMobileAutoCloseState);
+                    mobileQuery.addEventListener('change', function () {
+                        applyMobileDefaultState();
+                        syncSidebarHeight();
+                    });
                 } else if (mobileQuery.addListener) {
-                    mobileQuery.addListener(applyMobileAutoCloseState);
+                    mobileQuery.addListener(function () {
+                        applyMobileDefaultState();
+                        syncSidebarHeight();
+                    });
                 }
             })();
         </script>
