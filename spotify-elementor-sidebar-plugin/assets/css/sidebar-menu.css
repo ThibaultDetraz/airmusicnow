@@ -27,8 +27,9 @@
 
 .sems-sidebar__toggle {
     position: absolute;
-    top: 18px;
-    right: 14px;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
     width: 28px;
     height: 28px;
     border: 0;
@@ -77,11 +78,23 @@
     display: inline-flex;
 }
 
+.sems-sidebar__header {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-height: 40px;
+    margin-bottom: 30px;
+}
+
+.sems-sidebar__header.has-toggle {
+    padding-right: 44px;
+}
+
 .sems-brand {
     display: block;
     width: 100%;
-    padding-right: 34px;
-    margin-bottom: 34px;
+    padding-right: 0;
+    margin-bottom: 0;
 }
 
 .sems-brand__icon {

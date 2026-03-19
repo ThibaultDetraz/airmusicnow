@@ -1041,11 +1041,13 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
         ?>
         <aside id="<?php echo esc_attr($sidebar_id); ?>" class="<?php echo esc_attr($sidebar_classes); ?>" aria-label="Sidebar menu">
             <div class="sems-sidebar__inner">
-                <?php if ($enable_toggle) : ?>
-                    <?php $this->render_toggle_button($collapsed, $settings); ?>
-                <?php endif; ?>
+                <div class="sems-sidebar__header<?php echo $enable_toggle ? ' has-toggle' : ''; ?>">
+                    <?php $this->render_brand($settings); ?>
 
-                <?php $this->render_brand($settings); ?>
+                    <?php if ($enable_toggle) : ?>
+                        <?php $this->render_toggle_button($collapsed, $settings); ?>
+                    <?php endif; ?>
+                </div>
 
                 <nav class="sems-main-nav" aria-label="Main navigation">
                     <?php $this->render_main_menu_items($settings['main_menu_items'] ?? []); ?>
