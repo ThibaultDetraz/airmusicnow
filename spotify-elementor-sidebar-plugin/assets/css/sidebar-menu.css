@@ -87,7 +87,7 @@
 }
 
 .sems-sidebar__header.has-toggle {
-    padding-right: 44px;
+    padding-right: min(44px, 46%);
 }
 
 .sems-brand {
@@ -98,6 +98,8 @@
 }
 
 .sems-brand__icon {
+    display: flex;
+    align-items: center;
     width: 100%;
     max-width: 100%;
     min-height: 40px;
@@ -338,9 +340,29 @@
     width: 86px;
 }
 
+.sems-sidebar.is-collapsed .sems-sidebar__header {
+    justify-content: center;
+}
+
+.sems-sidebar.is-collapsed .sems-sidebar__header.has-toggle {
+    padding-right: min(28px, 46%);
+}
+
 .sems-sidebar.is-collapsed .sems-brand {
+    display: flex;
+    align-items: center;
     justify-content: center;
     padding-right: 0;
+}
+
+.sems-sidebar.is-collapsed .sems-brand__icon {
+    min-height: 24px;
+    justify-content: center;
+}
+
+.sems-sidebar.is-collapsed .sems-brand.has-collapsed-logo .sems-brand__img--collapsed {
+    max-height: 24px;
+    width: auto;
 }
 
 .sems-sidebar.is-collapsed .sems-brand.has-collapsed-logo .sems-brand__img--expanded {
