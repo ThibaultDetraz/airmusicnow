@@ -419,6 +419,14 @@
 }
 
 @media (max-width: 767px) {
+    .sems-sidebar {
+        display: none !important;
+    }
+
+    .sems-floating-tooltip {
+        display: none !important;
+    }
+
     .sems-mobile-floating-nav {
         position: fixed;
         left: 12px;
