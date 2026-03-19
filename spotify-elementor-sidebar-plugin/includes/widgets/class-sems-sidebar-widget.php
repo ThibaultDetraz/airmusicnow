@@ -495,7 +495,7 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
                 'label' => esc_html__('Background Color', 'spotify-elementor-sidebar-menu'),
                 'type' => \Elementor\Controls_Manager::COLOR,
                 'selectors' => [
-                    '{{WRAPPER}} .sems-sidebar' => 'background: {{VALUE}};',
+                    '{{WRAPPER}} .sems-sidebar' => 'background: {{VALUE}} !important;',
                 ],
             ]
         );
@@ -508,8 +508,9 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
                 'size_units' => ['px'],
                 'range' => ['px' => ['min' => 180, 'max' => 420]],
                 'selectors' => [
-                    '{{WRAPPER}} .sems-sidebar' => 'width: {{SIZE}}{{UNIT}};',
+                    '{{WRAPPER}} .sems-sidebar' => 'width: {{SIZE}}{{UNIT}} !important; min-width: {{SIZE}}{{UNIT}} !important;',
                 ],
+                'description' => esc_html__('Applies when the sidebar is expanded.', 'spotify-elementor-sidebar-menu'),
             ]
         );
 
@@ -521,8 +522,9 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
                 'size_units' => ['px'],
                 'range' => ['px' => ['min' => 56, 'max' => 220]],
                 'selectors' => [
-                    '{{WRAPPER}} .sems-sidebar.is-collapsed' => 'width: {{SIZE}}{{UNIT}};',
+                    '{{WRAPPER}} .sems-sidebar.is-collapsed' => 'width: {{SIZE}}{{UNIT}} !important; min-width: {{SIZE}}{{UNIT}} !important;',
                 ],
+                'description' => esc_html__('Applies when the sidebar is collapsed.', 'spotify-elementor-sidebar-menu'),
             ]
         );
 
@@ -533,7 +535,7 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
                 'type' => \Elementor\Controls_Manager::DIMENSIONS,
                 'size_units' => ['px'],
                 'selectors' => [
-                    '{{WRAPPER}} .sems-sidebar__inner' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+                    '{{WRAPPER}} .sems-sidebar__inner' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}} !important;',
                 ],
             ]
         );
