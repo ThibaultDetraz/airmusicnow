@@ -570,6 +570,7 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
                 'range' => ['px' => ['min' => 20, 'max' => 140]],
                 'selectors' => [
                     '{{WRAPPER}} .sems-brand__icon' => 'max-height: {{SIZE}}{{UNIT}};',
+                    '{{WRAPPER}} .sems-brand__img' => 'max-height: {{SIZE}}{{UNIT}};',
                 ],
             ]
         );
@@ -959,7 +960,7 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
                 'type' => \Elementor\Controls_Manager::COLOR,
                 'selectors' => [
                     '{{WRAPPER}} .sems-language-btn' => 'color: {{VALUE}};',
-                    '{{WRAPPER}} .sems-language-switcher .trp-ls-shortcode-current-language > a' => 'color: {{VALUE}};',
+                    '{{WRAPPER}} .sems-language-switcher .trp-ls-shortcode-current-language > a' => 'color: {{VALUE}} !important;',
                 ],
             ]
         );
@@ -971,7 +972,7 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
                 'type' => \Elementor\Controls_Manager::COLOR,
                 'selectors' => [
                     '{{WRAPPER}} .sems-language-btn' => 'border-color: {{VALUE}};',
-                    '{{WRAPPER}} .sems-language-switcher .trp-ls-shortcode-current-language > a' => 'border-color: {{VALUE}};',
+                    '{{WRAPPER}} .sems-language-switcher .trp-ls-shortcode-current-language > a' => 'border-color: {{VALUE}} !important;',
                 ],
             ]
         );
@@ -1038,12 +1039,12 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
         $this->add_responsive_control(
             'toggle_position_top',
             [
-                'label' => esc_html__('Top Offset', 'spotify-elementor-sidebar-menu'),
+                'label' => esc_html__('Vertical Offset', 'spotify-elementor-sidebar-menu'),
                 'type' => \Elementor\Controls_Manager::SLIDER,
                 'size_units' => ['px'],
-                'range' => ['px' => ['min' => 0, 'max' => 120]],
+                'range' => ['px' => ['min' => -120, 'max' => 120]],
                 'selectors' => [
-                    '{{WRAPPER}} .sems-sidebar__toggle' => 'top: {{SIZE}}{{UNIT}};',
+                    '{{WRAPPER}} .sems-sidebar__toggle' => 'top: calc(50% + {{SIZE}}{{UNIT}});',
                 ],
             ]
         );
