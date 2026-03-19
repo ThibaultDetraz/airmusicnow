@@ -574,6 +574,174 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
             ]
         );
 
+        $this->add_control(
+            'brand_open_logo_heading',
+            [
+                'label' => esc_html__('Open Logo', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::HEADING,
+                'separator' => 'before',
+            ]
+        );
+
+        $this->add_responsive_control(
+            'brand_open_logo_width',
+            [
+                'label' => esc_html__('Width', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::SLIDER,
+                'size_units' => ['px', '%'],
+                'range' => [
+                    'px' => ['min' => 20, 'max' => 300],
+                    '%' => ['min' => 10, 'max' => 100],
+                ],
+                'selectors' => [
+                    '{{WRAPPER}} .sems-sidebar:not(.is-collapsed) .sems-brand__img--expanded' => 'width: {{SIZE}}{{UNIT}};',
+                ],
+            ]
+        );
+
+        $this->add_responsive_control(
+            'brand_open_logo_max_height',
+            [
+                'label' => esc_html__('Max Height', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::SLIDER,
+                'size_units' => ['px'],
+                'range' => ['px' => ['min' => 12, 'max' => 180]],
+                'selectors' => [
+                    '{{WRAPPER}} .sems-sidebar:not(.is-collapsed) .sems-brand__img--expanded' => 'max-height: {{SIZE}}{{UNIT}}; height: auto;',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'brand_open_logo_object_fit',
+            [
+                'label' => esc_html__('Object Fit', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::SELECT,
+                'options' => [
+                    '' => esc_html__('Default', 'spotify-elementor-sidebar-menu'),
+                    'contain' => esc_html__('Contain', 'spotify-elementor-sidebar-menu'),
+                    'cover' => esc_html__('Cover', 'spotify-elementor-sidebar-menu'),
+                    'fill' => esc_html__('Fill', 'spotify-elementor-sidebar-menu'),
+                    'none' => esc_html__('None', 'spotify-elementor-sidebar-menu'),
+                    'scale-down' => esc_html__('Scale Down', 'spotify-elementor-sidebar-menu'),
+                ],
+                'selectors' => [
+                    '{{WRAPPER}} .sems-sidebar:not(.is-collapsed) .sems-brand__img--expanded' => 'object-fit: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_responsive_control(
+            'brand_open_logo_margin',
+            [
+                'label' => esc_html__('Margin', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::DIMENSIONS,
+                'size_units' => ['px', '%'],
+                'selectors' => [
+                    '{{WRAPPER}} .sems-sidebar:not(.is-collapsed) .sems-brand__img--expanded' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'brand_open_logo_opacity',
+            [
+                'label' => esc_html__('Opacity', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::SLIDER,
+                'size_units' => ['custom'],
+                'range' => [
+                    'custom' => ['min' => 0, 'max' => 1, 'step' => 0.01],
+                ],
+                'selectors' => [
+                    '{{WRAPPER}} .sems-sidebar:not(.is-collapsed) .sems-brand__img--expanded' => 'opacity: {{SIZE}};',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'brand_closed_logo_heading',
+            [
+                'label' => esc_html__('Closed Logo', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::HEADING,
+                'separator' => 'before',
+            ]
+        );
+
+        $this->add_responsive_control(
+            'brand_closed_logo_width',
+            [
+                'label' => esc_html__('Width', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::SLIDER,
+                'size_units' => ['px', '%'],
+                'range' => [
+                    'px' => ['min' => 10, 'max' => 180],
+                    '%' => ['min' => 10, 'max' => 100],
+                ],
+                'selectors' => [
+                    '{{WRAPPER}} .sems-sidebar.is-collapsed .sems-brand__img--collapsed' => 'width: {{SIZE}}{{UNIT}};',
+                ],
+            ]
+        );
+
+        $this->add_responsive_control(
+            'brand_closed_logo_max_height',
+            [
+                'label' => esc_html__('Max Height', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::SLIDER,
+                'size_units' => ['px'],
+                'range' => ['px' => ['min' => 10, 'max' => 120]],
+                'selectors' => [
+                    '{{WRAPPER}} .sems-sidebar.is-collapsed .sems-brand__img--collapsed' => 'max-height: {{SIZE}}{{UNIT}}; height: auto;',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'brand_closed_logo_object_fit',
+            [
+                'label' => esc_html__('Object Fit', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::SELECT,
+                'options' => [
+                    '' => esc_html__('Default', 'spotify-elementor-sidebar-menu'),
+                    'contain' => esc_html__('Contain', 'spotify-elementor-sidebar-menu'),
+                    'cover' => esc_html__('Cover', 'spotify-elementor-sidebar-menu'),
+                    'fill' => esc_html__('Fill', 'spotify-elementor-sidebar-menu'),
+                    'none' => esc_html__('None', 'spotify-elementor-sidebar-menu'),
+                    'scale-down' => esc_html__('Scale Down', 'spotify-elementor-sidebar-menu'),
+                ],
+                'selectors' => [
+                    '{{WRAPPER}} .sems-sidebar.is-collapsed .sems-brand__img--collapsed' => 'object-fit: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_responsive_control(
+            'brand_closed_logo_margin',
+            [
+                'label' => esc_html__('Margin', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::DIMENSIONS,
+                'size_units' => ['px', '%'],
+                'selectors' => [
+                    '{{WRAPPER}} .sems-sidebar.is-collapsed .sems-brand__img--collapsed' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'brand_closed_logo_opacity',
+            [
+                'label' => esc_html__('Opacity', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::SLIDER,
+                'size_units' => ['custom'],
+                'range' => [
+                    'custom' => ['min' => 0, 'max' => 1, 'step' => 0.01],
+                ],
+                'selectors' => [
+                    '{{WRAPPER}} .sems-sidebar.is-collapsed .sems-brand__img--collapsed' => 'opacity: {{SIZE}};',
+                ],
+            ]
+        );
+
         $this->end_controls_section();
     }
 
