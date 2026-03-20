@@ -62,15 +62,18 @@
     stroke: currentColor !important;
 }
 
-.sems-sidebar__toggle-open {
-    display: none;
-}
-
 .sems-sidebar__toggle-close,
 .sems-sidebar__toggle-open {
-    display: inline-flex;
     align-items: center;
     justify-content: center;
+}
+
+.sems-sidebar__toggle-close {
+    display: inline-flex;
+}
+
+.sems-sidebar__toggle-open {
+    display: none;
 }
 
 .sems-sidebar__toggle .sems-sidebar__toggle-close svg {

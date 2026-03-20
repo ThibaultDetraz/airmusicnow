@@ -1039,6 +1039,18 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
         );
 
         $this->add_responsive_control(
+            'toggle_button_padding',
+            [
+                'label' => esc_html__('Button Padding', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::DIMENSIONS,
+                'size_units' => ['px'],
+                'selectors' => [
+                    '{{WRAPPER}} .sems-sidebar__toggle' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}; box-sizing: border-box;',
+                ],
+            ]
+        );
+
+        $this->add_responsive_control(
             'toggle_position_top',
             [
                 'label' => esc_html__('Vertical Offset', 'spotify-elementor-sidebar-menu'),
