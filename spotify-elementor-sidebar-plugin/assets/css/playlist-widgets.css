@@ -55,6 +55,11 @@
 .sems-playlist-form input[type="file"] {
     width: 100%;
     margin-bottom: 12px;
+    border: 1px solid #2e2e2e;
+    border-radius: 8px;
+    background: #181818;
+    color: #fff;
+    padding: 10px 12px;
 }
 
 .sems-playlist-note {
@@ -64,8 +69,8 @@
 }
 
 .sems-playlist-products {
-    max-height: 240px;
-    overflow: auto;
+    max-height: none;
+    overflow: visible;
     border: 1px solid #2e2e2e;
     border-radius: 10px;
     padding: 10px;
@@ -146,6 +151,13 @@
 .sems-playlist-card__title {
     margin: 0 0 8px;
     font-size: 16px;
+}
+
+.sems-playlist-card__tracks-heading {
+    margin: 0 0 8px;
+    color: #b3b3b3;
+    font-size: 13px;
+    font-weight: 700;
 }
 
 .sems-playlist-card__products {

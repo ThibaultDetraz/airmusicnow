@@ -37,19 +37,46 @@ final class SEMS_Playlists {
     }
 
     public static function get_user_downloadable_product_ids(int $user_id): array {
-        if ($user_id <= 0 || !function_exists('wc_get_customer_available_downloads')) {
-            return [];
-        }
-
-        $downloads = wc_get_customer_available_downloads($user_id);
-        if (!is_array($downloads) || empty($downloads)) {
+        if ($user_id <= 0) {
             return [];
         }
 
         $product_ids = [];
-        foreach ($downloads as $download) {
-            if (!empty($download['product_id'])) {
-                $product_ids[] = (int) $download['product_id'];
+
+        if (function_exists('wc_get_customer_available_downloads')) {
+            $downloads = wc_get_customer_available_downloads($user_id);
+            if (is_array($downloads) && !empty($downloads)) {
+                foreach ($downloads as $download) {
+                    if (!empty($download['product_id'])) {
+                        $product_ids[] = (int) $download['product_id'];
+                    }
+                }
+            }
+        }
+
+        if (function_exists('wc_get_orders')) {
+            $orders = wc_get_orders(
+                [
+                    'customer_id' => $user_id,
+                    'status' => ['wc-completed', 'wc-processing', 'wc-on-hold'],
+                    'limit' => -1,
+                    'return' => 'objects',
+                ]
+            );
+
+            foreach ($orders as $order) {
+                if (!is_a($order, 'WC_Order')) {
+                    continue;
+                }
+
+                foreach ($order->get_items('line_item') as $item) {
+                    $product = $item->get_product();
+                    if (!$product || !$product->is_downloadable()) {
+                        continue;
+                    }
+
+                    $product_ids[] = (int) $product->get_id();
+                }
             }
         }
 
@@ -77,7 +104,7 @@ final class SEMS_Playlists {
         $user_id = get_current_user_id();
         $available_product_ids = self::get_user_downloadable_product_ids($user_id);
         if (empty($available_product_ids)) {
-            self::redirect_with_status('error', esc_html__('No downloadable products were found for your account.', 'spotify-elementor-sidebar-menu'), $redirect_url);
+            self::redirect_with_status('error', esc_html__('No downloadable tracks were found for your account.', 'spotify-elementor-sidebar-menu'), $redirect_url);
         }
 
         $selected_products_raw = isset($_POST['playlist_products']) && is_array($_POST['playlist_products']) ? wp_unslash($_POST['playlist_products']) : [];
@@ -85,7 +112,7 @@ final class SEMS_Playlists {
         $selected_products = array_values(array_intersect($selected_products, $available_product_ids));
 
         if (empty($selected_products)) {
-            self::redirect_with_status('error', esc_html__('Please select at least one product.', 'spotify-elementor-sidebar-menu'), $redirect_url);
+            self::redirect_with_status('error', esc_html__('Please select at least one track.', 'spotify-elementor-sidebar-menu'), $redirect_url);
         }
 
         $cover_attachment_id = 0;

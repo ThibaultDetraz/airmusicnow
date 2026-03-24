@@ -48,7 +48,7 @@ class SEMS_Create_Playlist_Widget extends \Elementor\Widget_Base {
             [
                 'label' => esc_html__('Description', 'spotify-elementor-sidebar-menu'),
                 'type' => \Elementor\Controls_Manager::TEXTAREA,
-                'default' => esc_html__('Build your playlist from your WooCommerce downloaded products.', 'spotify-elementor-sidebar-menu'),
+                'default' => esc_html__('Build your playlist from your WooCommerce downloaded tracks.', 'spotify-elementor-sidebar-menu'),
             ]
         );
 
@@ -58,6 +58,260 @@ class SEMS_Create_Playlist_Widget extends \Elementor\Widget_Base {
                 'label' => esc_html__('Submit Button Label', 'spotify-elementor-sidebar-menu'),
                 'type' => \Elementor\Controls_Manager::TEXT,
                 'default' => esc_html__('Save Playlist', 'spotify-elementor-sidebar-menu'),
+            ]
+        );
+
+        $this->end_controls_section();
+
+        $this->register_container_style_controls();
+        $this->register_typography_style_controls();
+        $this->register_form_style_controls();
+        $this->register_button_style_controls();
+    }
+
+    private function register_container_style_controls(): void {
+        $this->start_controls_section(
+            'section_style_container',
+            [
+                'label' => esc_html__('Container', 'spotify-elementor-sidebar-menu'),
+                'tab' => \Elementor\Controls_Manager::TAB_STYLE,
+            ]
+        );
+
+        $this->add_control(
+            'container_bg_color',
+            [
+                'label' => esc_html__('Background', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .sems-playlist-create' => 'background: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'container_border_color',
+            [
+                'label' => esc_html__('Border Color', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .sems-playlist-create' => 'border-color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_responsive_control(
+            'container_border_radius',
+            [
+                'label' => esc_html__('Border Radius', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::DIMENSIONS,
+                'size_units' => ['px', '%'],
+                'selectors' => [
+                    '{{WRAPPER}} .sems-playlist-create' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+                ],
+            ]
+        );
+
+        $this->add_responsive_control(
+            'container_padding',
+            [
+                'label' => esc_html__('Padding', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::DIMENSIONS,
+                'size_units' => ['px', '%'],
+                'selectors' => [
+                    '{{WRAPPER}} .sems-playlist-create' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+                ],
+            ]
+        );
+
+        $this->end_controls_section();
+    }
+
+    private function register_typography_style_controls(): void {
+        $this->start_controls_section(
+            'section_style_typography',
+            [
+                'label' => esc_html__('Typography', 'spotify-elementor-sidebar-menu'),
+                'tab' => \Elementor\Controls_Manager::TAB_STYLE,
+            ]
+        );
+
+        $this->add_control(
+            'title_color',
+            [
+                'label' => esc_html__('Title Color', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .sems-playlist-create__title' => 'color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_group_control(
+            \Elementor\Group_Control_Typography::get_type(),
+            [
+                'name' => 'title_typography',
+                'selector' => '{{WRAPPER}} .sems-playlist-create__title',
+            ]
+        );
+
+        $this->add_control(
+            'description_color',
+            [
+                'label' => esc_html__('Description Color', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .sems-playlist-create__description' => 'color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_group_control(
+            \Elementor\Group_Control_Typography::get_type(),
+            [
+                'name' => 'description_typography',
+                'selector' => '{{WRAPPER}} .sems-playlist-create__description',
+            ]
+        );
+
+        $this->add_control(
+            'label_color',
+            [
+                'label' => esc_html__('Label Color', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .sems-playlist-form label, {{WRAPPER}} .sems-playlist-step-title, {{WRAPPER}} .sems-playlist-summary' => 'color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_group_control(
+            \Elementor\Group_Control_Typography::get_type(),
+            [
+                'name' => 'label_typography',
+                'selector' => '{{WRAPPER}} .sems-playlist-form label, {{WRAPPER}} .sems-playlist-step-title',
+            ]
+        );
+
+        $this->add_control(
+            'steps_inactive_color',
+            [
+                'label' => esc_html__('Step Inactive Color', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .sems-playlist-steps span' => 'color: {{VALUE}}; border-color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'steps_active_color',
+            [
+                'label' => esc_html__('Step Active Color', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .sems-playlist-steps span.is-active' => 'color: {{VALUE}}; border-color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->end_controls_section();
+    }
+
+    private function register_form_style_controls(): void {
+        $this->start_controls_section(
+            'section_style_form',
+            [
+                'label' => esc_html__('Fields', 'spotify-elementor-sidebar-menu'),
+                'tab' => \Elementor\Controls_Manager::TAB_STYLE,
+            ]
+        );
+
+        $this->add_control(
+            'field_text_color',
+            [
+                'label' => esc_html__('Field Text Color', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .sems-playlist-form input[type="text"], {{WRAPPER}} .sems-playlist-form input[type="file"]' => 'color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'field_bg_color',
+            [
+                'label' => esc_html__('Field Background', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .sems-playlist-form input[type="text"], {{WRAPPER}} .sems-playlist-form input[type="file"]' => 'background: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'field_border_color',
+            [
+                'label' => esc_html__('Field Border Color', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .sems-playlist-form input[type="text"], {{WRAPPER}} .sems-playlist-form input[type="file"], {{WRAPPER}} .sems-playlist-products' => 'border-color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_responsive_control(
+            'tracks_panel_max_height',
+            [
+                'label' => esc_html__('Tracks Panel Max Height', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::SLIDER,
+                'size_units' => ['px'],
+                'range' => ['px' => ['min' => 120, 'max' => 800]],
+                'selectors' => [
+                    '{{WRAPPER}} .sems-playlist-products' => 'max-height: {{SIZE}}{{UNIT}};',
+                ],
+            ]
+        );
+
+        $this->end_controls_section();
+    }
+
+    private function register_button_style_controls(): void {
+        $this->start_controls_section(
+            'section_style_buttons',
+            [
+                'label' => esc_html__('Buttons', 'spotify-elementor-sidebar-menu'),
+                'tab' => \Elementor\Controls_Manager::TAB_STYLE,
+            ]
+        );
+
+        $this->add_control(
+            'button_bg_color',
+            [
+                'label' => esc_html__('Button Background', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .sems-playlist-actions button, {{WRAPPER}} .sems-submit-playlist' => 'background: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'button_text_color',
+            [
+                'label' => esc_html__('Button Text Color', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .sems-playlist-actions button, {{WRAPPER}} .sems-submit-playlist' => 'color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_group_control(
+            \Elementor\Group_Control_Typography::get_type(),
+            [
+                'name' => 'button_typography',
+                'selector' => '{{WRAPPER}} .sems-playlist-actions button, {{WRAPPER}} .sems-submit-playlist',
             ]
         );
 
@@ -79,7 +333,7 @@ class SEMS_Create_Playlist_Widget extends \Elementor\Widget_Base {
         $downloads = SEMS_Playlists::get_user_downloadable_product_ids(get_current_user_id());
 
         if (empty($downloads)) {
-            echo '<div class="sems-playlist-message sems-playlist-message--error">' . esc_html__('No downloadable products available for your account yet.', 'spotify-elementor-sidebar-menu') . '</div>';
+            echo '<div class="sems-playlist-message sems-playlist-message--error">' . esc_html__('No downloadable tracks available for your account yet.', 'spotify-elementor-sidebar-menu') . '</div>';
             return;
         }
 
@@ -109,7 +363,7 @@ class SEMS_Create_Playlist_Widget extends \Elementor\Widget_Base {
 
         echo '<div class="sems-playlist-steps">';
         echo '<span class="is-active">1. ' . esc_html__('Details', 'spotify-elementor-sidebar-menu') . '</span>';
-        echo '<span>2. ' . esc_html__('Products', 'spotify-elementor-sidebar-menu') . '</span>';
+        echo '<span>2. ' . esc_html__('Tracks', 'spotify-elementor-sidebar-menu') . '</span>';
         echo '<span>3. ' . esc_html__('Save', 'spotify-elementor-sidebar-menu') . '</span>';
         echo '</div>';
 
@@ -125,7 +379,7 @@ class SEMS_Create_Playlist_Widget extends \Elementor\Widget_Base {
         echo '</div>';
 
         echo '<div class="sems-playlist-step" data-step="2">';
-        echo '<p class="sems-playlist-step-title">' . esc_html__('Select downloaded products', 'spotify-elementor-sidebar-menu') . '</p>';
+        echo '<p class="sems-playlist-step-title">' . esc_html__('Select downloaded tracks', 'spotify-elementor-sidebar-menu') . '</p>';
         echo '<div class="sems-playlist-products">';
 
         foreach ($downloads as $product_id) {
@@ -151,7 +405,7 @@ class SEMS_Create_Playlist_Widget extends \Elementor\Widget_Base {
         echo '<p class="sems-playlist-step-title">' . esc_html__('Review and save your playlist', 'spotify-elementor-sidebar-menu') . '</p>';
         echo '<ul class="sems-playlist-summary">';
         echo '<li>' . esc_html__('Name and cover image are set in step 1.', 'spotify-elementor-sidebar-menu') . '</li>';
-        echo '<li>' . esc_html__('Selected products are chosen in step 2.', 'spotify-elementor-sidebar-menu') . '</li>';
+        echo '<li>' . esc_html__('Selected tracks are chosen in step 2.', 'spotify-elementor-sidebar-menu') . '</li>';
         echo '</ul>';
         echo '<div class="sems-playlist-actions">';
         echo '<button type="button" class="sems-prev-step">' . esc_html__('Back', 'spotify-elementor-sidebar-menu') . '</button>';
@@ -212,7 +466,7 @@ class SEMS_Create_Playlist_Widget extends \Elementor\Widget_Base {
                     if (!hasProduct) {
                         event.preventDefault();
                         setStep(1);
-                        window.alert('Please select at least one product.');
+                        window.alert('Please select at least one track.');
                     }
                 });
             })();

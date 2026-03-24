@@ -59,11 +59,11 @@ class SEMS_Playlist_Grid_Widget extends \Elementor\Widget_Base {
         $this->add_control(
             'products_limit',
             [
-                'label' => esc_html__('Products per Playlist', 'spotify-elementor-sidebar-menu'),
+                'label' => esc_html__('Tracks per Playlist', 'spotify-elementor-sidebar-menu'),
                 'type' => \Elementor\Controls_Manager::NUMBER,
                 'min' => 1,
-                'max' => 50,
-                'default' => 8,
+                'max' => 200,
+                'default' => 50,
             ]
         );
 
@@ -96,6 +96,88 @@ class SEMS_Playlist_Grid_Widget extends \Elementor\Widget_Base {
                 'selectors' => [
                     '{{WRAPPER}} .sems-playlist-grid' => 'grid-template-columns: repeat({{SIZE}}, minmax(0, 1fr));',
                 ],
+            ]
+        );
+
+        $this->add_control(
+            'card_bg_color',
+            [
+                'label' => esc_html__('Card Background', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .sems-playlist-card' => 'background: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'card_border_color',
+            [
+                'label' => esc_html__('Card Border Color', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .sems-playlist-card' => 'border-color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'title_color',
+            [
+                'label' => esc_html__('Playlist Name Color', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .sems-playlist-card__title' => 'color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_group_control(
+            \Elementor\Group_Control_Typography::get_type(),
+            [
+                'name' => 'title_typography',
+                'selector' => '{{WRAPPER}} .sems-playlist-card__title',
+            ]
+        );
+
+        $this->add_control(
+            'tracks_heading_color',
+            [
+                'label' => esc_html__('Tracks Label Color', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .sems-playlist-card__tracks-heading' => 'color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'track_link_color',
+            [
+                'label' => esc_html__('Track Link Color', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .sems-playlist-card__products a' => 'color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'track_link_hover_color',
+            [
+                'label' => esc_html__('Track Link Hover Color', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .sems-playlist-card__products a:hover' => 'color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_group_control(
+            \Elementor\Group_Control_Typography::get_type(),
+            [
+                'name' => 'track_typography',
+                'selector' => '{{WRAPPER}} .sems-playlist-card__tracks-heading, {{WRAPPER}} .sems-playlist-card__products',
             ]
         );
 
@@ -161,6 +243,7 @@ class SEMS_Playlist_Grid_Widget extends \Elementor\Widget_Base {
             }
 
             echo '<h4 class="sems-playlist-card__title">' . esc_html(get_the_title()) . '</h4>';
+            echo '<p class="sems-playlist-card__tracks-heading">' . esc_html__('Tracks', 'spotify-elementor-sidebar-menu') . '</p>';
             echo '<ul class="sems-playlist-card__products">';
 
             foreach ($product_ids as $product_id) {
