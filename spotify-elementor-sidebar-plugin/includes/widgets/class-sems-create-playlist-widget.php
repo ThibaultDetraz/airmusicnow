@@ -48,7 +48,7 @@ class SEMS_Create_Playlist_Widget extends \Elementor\Widget_Base {
             [
                 'label' => esc_html__('Description', 'spotify-elementor-sidebar-menu'),
                 'type' => \Elementor\Controls_Manager::TEXTAREA,
-                'default' => esc_html__('Build your playlist from your WooCommerce downloaded tracks.', 'spotify-elementor-sidebar-menu'),
+                'default' => esc_html__('Build your playlist from all published WooCommerce tracks.', 'spotify-elementor-sidebar-menu'),
             ]
         );
 
@@ -96,6 +96,18 @@ class SEMS_Create_Playlist_Widget extends \Elementor\Widget_Base {
                 'type' => \Elementor\Controls_Manager::COLOR,
                 'selectors' => [
                     '{{WRAPPER}} .sems-playlist-create' => 'border-color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_responsive_control(
+            'container_border_width',
+            [
+                'label' => esc_html__('Border Width', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::DIMENSIONS,
+                'size_units' => ['px'],
+                'selectors' => [
+                    '{{WRAPPER}} .sems-playlist-create' => 'border-style: solid; border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
                 ],
             ]
         );
@@ -307,6 +319,41 @@ class SEMS_Create_Playlist_Widget extends \Elementor\Widget_Base {
             ]
         );
 
+        $this->add_control(
+            'button_border_color',
+            [
+                'label' => esc_html__('Button Border Color', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .sems-playlist-actions button, {{WRAPPER}} .sems-submit-playlist' => 'border-color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_responsive_control(
+            'button_border_width',
+            [
+                'label' => esc_html__('Button Border Width', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::DIMENSIONS,
+                'size_units' => ['px'],
+                'selectors' => [
+                    '{{WRAPPER}} .sems-playlist-actions button, {{WRAPPER}} .sems-submit-playlist' => 'border-style: solid; border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+                ],
+            ]
+        );
+
+        $this->add_responsive_control(
+            'button_border_radius',
+            [
+                'label' => esc_html__('Button Border Radius', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::DIMENSIONS,
+                'size_units' => ['px', '%'],
+                'selectors' => [
+                    '{{WRAPPER}} .sems-playlist-actions button, {{WRAPPER}} .sems-submit-playlist' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+                ],
+            ]
+        );
+
         $this->add_group_control(
             \Elementor\Group_Control_Typography::get_type(),
             [
@@ -330,10 +377,11 @@ class SEMS_Create_Playlist_Widget extends \Elementor\Widget_Base {
         }
 
         $settings = $this->get_settings_for_display();
-        $downloads = SEMS_Playlists::get_user_downloadable_product_ids(get_current_user_id());
+        $products = SEMS_Playlists::get_all_published_product_ids();
+        $tag_options = SEMS_Playlists::get_product_tag_options();
 
-        if (empty($downloads)) {
-            echo '<div class="sems-playlist-message sems-playlist-message--error">' . esc_html__('No downloadable tracks available for your account yet.', 'spotify-elementor-sidebar-menu') . '</div>';
+        if (empty($products)) {
+            echo '<div class="sems-playlist-message sems-playlist-message--error">' . esc_html__('No published tracks are available yet.', 'spotify-elementor-sidebar-menu') . '</div>';
             return;
         }
 
@@ -379,16 +427,37 @@ class SEMS_Create_Playlist_Widget extends \Elementor\Widget_Base {
         echo '</div>';
 
         echo '<div class="sems-playlist-step" data-step="2">';
-        echo '<p class="sems-playlist-step-title">' . esc_html__('Select downloaded tracks', 'spotify-elementor-sidebar-menu') . '</p>';
+        echo '<p class="sems-playlist-step-title">' . esc_html__('Select tracks', 'spotify-elementor-sidebar-menu') . '</p>';
+
+        if (!empty($tag_options)) {
+            echo '<label class="sems-playlist-filter-label" for="sems-track-tag-filter-' . esc_attr($this->get_id()) . '">' . esc_html__('Filter by tag', 'spotify-elementor-sidebar-menu') . '</label>';
+            echo '<select id="sems-track-tag-filter-' . esc_attr($this->get_id()) . '" class="sems-track-tag-filter">';
+            echo '<option value="">' . esc_html__('All tags', 'spotify-elementor-sidebar-menu') . '</option>';
+
+            foreach ($tag_options as $tag_option) {
+                echo '<option value="' . esc_attr((string) $tag_option['id']) . '">' . esc_html($tag_option['name']) . '</option>';
+            }
+
+            echo '</select>';
+        }
+
         echo '<div class="sems-playlist-products">';
 
-        foreach ($downloads as $product_id) {
+        foreach ($products as $product_id) {
             $product = wc_get_product($product_id);
             if (!$product) {
                 continue;
             }
 
-            echo '<label class="sems-playlist-product">';
+            $term_ids = wp_get_post_terms($product_id, 'product_tag', ['fields' => 'ids']);
+            if (is_wp_error($term_ids) || !is_array($term_ids)) {
+                $term_ids = [];
+            }
+
+            $term_ids = array_filter(array_map('intval', $term_ids));
+            $tag_ids_attr = implode(',', $term_ids);
+
+            echo '<label class="sems-playlist-product" data-tag-ids="' . esc_attr($tag_ids_attr) . '">';
             echo '<input type="checkbox" name="playlist_products[]" value="' . esc_attr((string) $product_id) . '" />';
             echo '<span>' . esc_html($product->get_name()) . '</span>';
             echo '</label>';
@@ -460,6 +529,28 @@ class SEMS_Create_Playlist_Widget extends \Elementor\Widget_Base {
                         setStep(stepIndex - 1);
                     });
                 });
+
+                var tagFilter = form.querySelector('.sems-track-tag-filter');
+                if (tagFilter) {
+                    tagFilter.addEventListener('change', function () {
+                        var selectedTag = tagFilter.value;
+                        var trackItems = form.querySelectorAll('.sems-playlist-product');
+
+                        trackItems.forEach(function (item) {
+                            if (!selectedTag) {
+                                item.style.display = '';
+                                return;
+                            }
+
+                            var tagIds = item.getAttribute('data-tag-ids') || '';
+                            var tags = tagIds.split(',').map(function (tag) {
+                                return tag.trim();
+                            }).filter(Boolean);
+
+                            item.style.display = tags.indexOf(selectedTag) !== -1 ? '' : 'none';
+                        });
+                    });
+                }
 
                 form.addEventListener('submit', function (event) {
                     var hasProduct = form.querySelector('input[name="playlist_products[]"]:checked');

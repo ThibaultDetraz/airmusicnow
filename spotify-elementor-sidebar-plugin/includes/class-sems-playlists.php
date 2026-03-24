@@ -36,6 +36,54 @@ final class SEMS_Playlists {
         return self::POST_TYPE;
     }
 
+    public static function get_all_published_product_ids(): array {
+        if (!function_exists('wc_get_products')) {
+            return [];
+        }
+
+        $product_ids = wc_get_products(
+            [
+                'status' => 'publish',
+                'limit' => -1,
+                'return' => 'ids',
+            ]
+        );
+
+        if (!is_array($product_ids)) {
+            return [];
+        }
+
+        return array_values(array_unique(array_map('intval', array_filter($product_ids))));
+    }
+
+    public static function get_product_tag_options(): array {
+        $terms = get_terms(
+            [
+                'taxonomy' => 'product_tag',
+                'hide_empty' => false,
+            ]
+        );
+
+        if (is_wp_error($terms) || !is_array($terms)) {
+            return [];
+        }
+
+        $options = [];
+        foreach ($terms as $term) {
+            if (!($term instanceof WP_Term)) {
+                continue;
+            }
+
+            $options[] = [
+                'id' => (int) $term->term_id,
+                'name' => $term->name,
+                'slug' => $term->slug,
+            ];
+        }
+
+        return $options;
+    }
+
     public static function get_user_downloadable_product_ids(int $user_id): array {
         if ($user_id <= 0) {
             return [];
@@ -102,9 +150,9 @@ final class SEMS_Playlists {
         }
 
         $user_id = get_current_user_id();
-        $available_product_ids = self::get_user_downloadable_product_ids($user_id);
+        $available_product_ids = self::get_all_published_product_ids();
         if (empty($available_product_ids)) {
-            self::redirect_with_status('error', esc_html__('No downloadable tracks were found for your account.', 'spotify-elementor-sidebar-menu'), $redirect_url);
+            self::redirect_with_status('error', esc_html__('No published tracks were found.', 'spotify-elementor-sidebar-menu'), $redirect_url);
         }
 
         $selected_products_raw = isset($_POST['playlist_products']) && is_array($_POST['playlist_products']) ? wp_unslash($_POST['playlist_products']) : [];

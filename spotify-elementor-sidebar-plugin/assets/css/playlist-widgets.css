@@ -68,6 +68,20 @@
     font-size: 12px;
 }
 
+.sems-playlist-filter-label {
+    margin-bottom: 6px;
+}
+
+.sems-track-tag-filter {
+    width: 100%;
+    margin-bottom: 12px;
+    border: 1px solid #2e2e2e;
+    border-radius: 8px;
+    background: #181818;
+    color: #fff;
+    padding: 10px 12px;
+}
+
 .sems-playlist-products {
     max-height: none;
     overflow: visible;
@@ -94,7 +108,7 @@
 .sems-submit-playlist {
     background: #1db954;
     color: #fff;
-    border: 0;
+    border: 1px solid transparent;
     border-radius: 8px;
     padding: 10px 16px;
     cursor: pointer;
