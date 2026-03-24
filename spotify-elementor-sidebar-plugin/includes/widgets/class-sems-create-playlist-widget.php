@@ -1,0 +1,222 @@
+<?php
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+
+class SEMS_Create_Playlist_Widget extends \Elementor\Widget_Base {
+    public function get_name(): string {
+        return 'sems_create_playlist';
+    }
+
+    public function get_title(): string {
+        return esc_html__('Create Playlist', 'spotify-elementor-sidebar-menu');
+    }
+
+    public function get_icon(): string {
+        return 'eicon-form-horizontal';
+    }
+
+    public function get_categories(): array {
+        return ['general'];
+    }
+
+    public function get_style_depends(): array {
+        return ['sems-playlist-widgets'];
+    }
+
+    protected function register_controls(): void {
+        $this->start_controls_section(
+            'section_content',
+            [
+                'label' => esc_html__('Content', 'spotify-elementor-sidebar-menu'),
+                'tab' => \Elementor\Controls_Manager::TAB_CONTENT,
+            ]
+        );
+
+        $this->add_control(
+            'title',
+            [
+                'label' => esc_html__('Title', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::TEXT,
+                'default' => esc_html__('Create a Playlist', 'spotify-elementor-sidebar-menu'),
+            ]
+        );
+
+        $this->add_control(
+            'description',
+            [
+                'label' => esc_html__('Description', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::TEXTAREA,
+                'default' => esc_html__('Build your playlist from your WooCommerce downloaded products.', 'spotify-elementor-sidebar-menu'),
+            ]
+        );
+
+        $this->add_control(
+            'submit_label',
+            [
+                'label' => esc_html__('Submit Button Label', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::TEXT,
+                'default' => esc_html__('Save Playlist', 'spotify-elementor-sidebar-menu'),
+            ]
+        );
+
+        $this->end_controls_section();
+    }
+
+    protected function render(): void {
+        if (!class_exists('WooCommerce')) {
+            echo '<div class="sems-playlist-message sems-playlist-message--error">' . esc_html__('WooCommerce is required for this widget.', 'spotify-elementor-sidebar-menu') . '</div>';
+            return;
+        }
+
+        if (!is_user_logged_in()) {
+            echo '<div class="sems-playlist-message sems-playlist-message--error">' . esc_html__('Please log in to create a playlist.', 'spotify-elementor-sidebar-menu') . '</div>';
+            return;
+        }
+
+        $settings = $this->get_settings_for_display();
+        $downloads = SEMS_Playlists::get_user_downloadable_product_ids(get_current_user_id());
+
+        if (empty($downloads)) {
+            echo '<div class="sems-playlist-message sems-playlist-message--error">' . esc_html__('No downloadable products available for your account yet.', 'spotify-elementor-sidebar-menu') . '</div>';
+            return;
+        }
+
+        $status = isset($_GET['sems_playlist_status']) ? sanitize_key(wp_unslash($_GET['sems_playlist_status'])) : '';
+        $message = isset($_GET['sems_playlist_message']) ? sanitize_text_field(rawurldecode(wp_unslash($_GET['sems_playlist_message']))) : '';
+
+        if (in_array($status, ['success', 'error'], true) && '' !== $message) {
+            $status_class = 'success' === $status ? 'sems-playlist-message--success' : 'sems-playlist-message--error';
+            echo '<div class="sems-playlist-message ' . esc_attr($status_class) . '">' . esc_html($message) . '</div>';
+        }
+
+        $playlist_name_id = 'sems-playlist-name-' . esc_attr($this->get_id());
+
+        echo '<div class="sems-playlist-create">';
+        if (!empty($settings['title'])) {
+            echo '<h3 class="sems-playlist-create__title">' . esc_html($settings['title']) . '</h3>';
+        }
+
+        if (!empty($settings['description'])) {
+            echo '<p class="sems-playlist-create__description">' . esc_html($settings['description']) . '</p>';
+        }
+
+        echo '<form class="sems-playlist-form" method="post" action="' . esc_url(admin_url('admin-post.php')) . '" enctype="multipart/form-data">';
+        echo '<input type="hidden" name="action" value="sems_create_playlist" />';
+        echo '<input type="hidden" name="sems_return_url" value="' . esc_url(get_permalink()) . '" />';
+        wp_nonce_field('sems_create_playlist', 'sems_create_playlist_nonce');
+
+        echo '<div class="sems-playlist-steps">';
+        echo '<span class="is-active">1. ' . esc_html__('Details', 'spotify-elementor-sidebar-menu') . '</span>';
+        echo '<span>2. ' . esc_html__('Products', 'spotify-elementor-sidebar-menu') . '</span>';
+        echo '<span>3. ' . esc_html__('Save', 'spotify-elementor-sidebar-menu') . '</span>';
+        echo '</div>';
+
+        echo '<div class="sems-playlist-step is-active" data-step="1">';
+        echo '<label for="' . esc_attr($playlist_name_id) . '">' . esc_html__('Playlist Name', 'spotify-elementor-sidebar-menu') . '</label>';
+        echo '<input id="' . esc_attr($playlist_name_id) . '" type="text" name="playlist_name" required maxlength="120" />';
+        echo '<label>' . esc_html__('Cover Image (max 2MB)', 'spotify-elementor-sidebar-menu') . '</label>';
+        echo '<input type="file" name="playlist_cover" accept="image/*" />';
+        echo '<p class="sems-playlist-note">' . esc_html__('Accepted: image files up to 2MB.', 'spotify-elementor-sidebar-menu') . '</p>';
+        echo '<div class="sems-playlist-actions">';
+        echo '<button type="button" class="sems-next-step">' . esc_html__('Next', 'spotify-elementor-sidebar-menu') . '</button>';
+        echo '</div>';
+        echo '</div>';
+
+        echo '<div class="sems-playlist-step" data-step="2">';
+        echo '<p class="sems-playlist-step-title">' . esc_html__('Select downloaded products', 'spotify-elementor-sidebar-menu') . '</p>';
+        echo '<div class="sems-playlist-products">';
+
+        foreach ($downloads as $product_id) {
+            $product = wc_get_product($product_id);
+            if (!$product) {
+                continue;
+            }
+
+            echo '<label class="sems-playlist-product">';
+            echo '<input type="checkbox" name="playlist_products[]" value="' . esc_attr((string) $product_id) . '" />';
+            echo '<span>' . esc_html($product->get_name()) . '</span>';
+            echo '</label>';
+        }
+
+        echo '</div>';
+        echo '<div class="sems-playlist-actions">';
+        echo '<button type="button" class="sems-prev-step">' . esc_html__('Back', 'spotify-elementor-sidebar-menu') . '</button>';
+        echo '<button type="button" class="sems-next-step">' . esc_html__('Next', 'spotify-elementor-sidebar-menu') . '</button>';
+        echo '</div>';
+        echo '</div>';
+
+        echo '<div class="sems-playlist-step" data-step="3">';
+        echo '<p class="sems-playlist-step-title">' . esc_html__('Review and save your playlist', 'spotify-elementor-sidebar-menu') . '</p>';
+        echo '<ul class="sems-playlist-summary">';
+        echo '<li>' . esc_html__('Name and cover image are set in step 1.', 'spotify-elementor-sidebar-menu') . '</li>';
+        echo '<li>' . esc_html__('Selected products are chosen in step 2.', 'spotify-elementor-sidebar-menu') . '</li>';
+        echo '</ul>';
+        echo '<div class="sems-playlist-actions">';
+        echo '<button type="button" class="sems-prev-step">' . esc_html__('Back', 'spotify-elementor-sidebar-menu') . '</button>';
+        echo '<button type="submit" class="sems-submit-playlist">' . esc_html($settings['submit_label'] ?: 'Save Playlist') . '</button>';
+        echo '</div>';
+        echo '</div>';
+
+        echo '</form>';
+        echo '</div>';
+
+        $this->render_step_script();
+    }
+
+    private function render_step_script(): void {
+        ?>
+        <script>
+            (function () {
+                var root = document.currentScript ? document.currentScript.previousElementSibling : null;
+                if (!root || !root.classList.contains('sems-playlist-create')) {
+                    return;
+                }
+
+                var form = root.querySelector('.sems-playlist-form');
+                if (!form) {
+                    return;
+                }
+
+                var steps = Array.prototype.slice.call(form.querySelectorAll('.sems-playlist-step'));
+                var indicators = Array.prototype.slice.call(form.querySelectorAll('.sems-playlist-steps span'));
+                var stepIndex = 0;
+
+                var setStep = function (index) {
+                    stepIndex = Math.max(0, Math.min(index, steps.length - 1));
+
+                    steps.forEach(function (step, idx) {
+                        step.classList.toggle('is-active', idx === stepIndex);
+                    });
+
+                    indicators.forEach(function (indicator, idx) {
+                        indicator.classList.toggle('is-active', idx === stepIndex);
+                    });
+                };
+
+                form.querySelectorAll('.sems-next-step').forEach(function (button) {
+                    button.addEventListener('click', function () {
+                        setStep(stepIndex + 1);
+                    });
+                });
+
+                form.querySelectorAll('.sems-prev-step').forEach(function (button) {
+                    button.addEventListener('click', function () {
+                        setStep(stepIndex - 1);
+                    });
+                });
+
+                form.addEventListener('submit', function (event) {
+                    var hasProduct = form.querySelector('input[name="playlist_products[]"]:checked');
+                    if (!hasProduct) {
+                        event.preventDefault();
+                        setStep(1);
+                        window.alert('Please select at least one product.');
+                    }
+                });
+            })();
+        </script>
+        <?php
+    }
+}
