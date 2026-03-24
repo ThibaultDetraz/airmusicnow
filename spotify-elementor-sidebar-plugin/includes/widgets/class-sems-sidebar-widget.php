@@ -298,12 +298,58 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
         );
 
         $this->add_control(
+            'mobile_floating_home_label',
+            [
+                'label' => esc_html__('Home Title', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::TEXT,
+                'default' => esc_html__('Home', 'spotify-elementor-sidebar-menu'),
+                'condition' => ['enable_mobile_floating_buttons' => 'yes'],
+            ]
+        );
+
+        $this->add_control(
+            'mobile_floating_home_icon',
+            [
+                'label' => esc_html__('Home Icon', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::ICONS,
+                'default' => [
+                    'value' => 'eicon-home',
+                    'library' => 'eicons',
+                ],
+                'condition' => ['enable_mobile_floating_buttons' => 'yes'],
+            ]
+        );
+
+        $this->add_control(
             'mobile_floating_library_url',
             [
                 'label' => esc_html__('Your Library Link', 'spotify-elementor-sidebar-menu'),
                 'type' => \Elementor\Controls_Manager::URL,
                 'placeholder' => 'https://example.com',
                 'default' => ['url' => '#'],
+                'condition' => ['enable_mobile_floating_buttons' => 'yes'],
+            ]
+        );
+
+        $this->add_control(
+            'mobile_floating_library_label',
+            [
+                'label' => esc_html__('Library Title', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::TEXT,
+                'default' => esc_html__('Your Library', 'spotify-elementor-sidebar-menu'),
+                'condition' => ['enable_mobile_floating_buttons' => 'yes'],
+            ]
+        );
+
+        $this->add_control(
+            'mobile_floating_library_icon',
+            [
+                'label' => esc_html__('Library Icon', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::ICONS,
+                'default' => [
+                    'value' => 'eicon-slider-push',
+                    'library' => 'eicons',
+                ],
                 'condition' => ['enable_mobile_floating_buttons' => 'yes'],
             ]
         );
@@ -320,12 +366,58 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
         );
 
         $this->add_control(
+            'mobile_floating_create_label',
+            [
+                'label' => esc_html__('Create Title', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::TEXT,
+                'default' => esc_html__('Create Playlists', 'spotify-elementor-sidebar-menu'),
+                'condition' => ['enable_mobile_floating_buttons' => 'yes'],
+            ]
+        );
+
+        $this->add_control(
+            'mobile_floating_create_icon',
+            [
+                'label' => esc_html__('Create Icon', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::ICONS,
+                'default' => [
+                    'value' => 'eicon-plus',
+                    'library' => 'eicons',
+                ],
+                'condition' => ['enable_mobile_floating_buttons' => 'yes'],
+            ]
+        );
+
+        $this->add_control(
             'mobile_floating_favorite_url',
             [
                 'label' => esc_html__('Favorite Link', 'spotify-elementor-sidebar-menu'),
                 'type' => \Elementor\Controls_Manager::URL,
                 'placeholder' => 'https://example.com',
                 'default' => ['url' => '#'],
+                'condition' => ['enable_mobile_floating_buttons' => 'yes'],
+            ]
+        );
+
+        $this->add_control(
+            'mobile_floating_favorite_label',
+            [
+                'label' => esc_html__('Favorite Title', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::TEXT,
+                'default' => esc_html__('Favorite', 'spotify-elementor-sidebar-menu'),
+                'condition' => ['enable_mobile_floating_buttons' => 'yes'],
+            ]
+        );
+
+        $this->add_control(
+            'mobile_floating_favorite_icon',
+            [
+                'label' => esc_html__('Favorite Icon', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::ICONS,
+                'default' => [
+                    'value' => 'eicon-heart-o',
+                    'library' => 'eicons',
+                ],
                 'condition' => ['enable_mobile_floating_buttons' => 'yes'],
             ]
         );
@@ -1301,24 +1393,24 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
 
         $items = [
             [
-                'label' => esc_html__('Home', 'spotify-elementor-sidebar-menu'),
+                'label' => !empty($settings['mobile_floating_home_label']) ? $settings['mobile_floating_home_label'] : esc_html__('Home', 'spotify-elementor-sidebar-menu'),
                 'url' => $settings['mobile_floating_home_url'] ?? ['url' => '#'],
-                'icon' => $this->get_main_menu_fallback_icon(0),
+                'icon' => $this->get_icon_markup($settings['mobile_floating_home_icon'] ?? [], $this->get_main_menu_fallback_icon(0)),
             ],
             [
-                'label' => esc_html__('Your Library', 'spotify-elementor-sidebar-menu'),
+                'label' => !empty($settings['mobile_floating_library_label']) ? $settings['mobile_floating_library_label'] : esc_html__('Your Library', 'spotify-elementor-sidebar-menu'),
                 'url' => $settings['mobile_floating_library_url'] ?? ['url' => '#'],
-                'icon' => $this->get_main_menu_fallback_icon(2),
+                'icon' => $this->get_icon_markup($settings['mobile_floating_library_icon'] ?? [], $this->get_main_menu_fallback_icon(2)),
             ],
             [
-                'label' => esc_html__('Create Playlists', 'spotify-elementor-sidebar-menu'),
+                'label' => !empty($settings['mobile_floating_create_label']) ? $settings['mobile_floating_create_label'] : esc_html__('Create Playlists', 'spotify-elementor-sidebar-menu'),
                 'url' => $settings['mobile_floating_create_url'] ?? ['url' => '#'],
-                'icon' => $this->get_shortcut_fallback_icon('plus'),
+                'icon' => $this->get_icon_markup($settings['mobile_floating_create_icon'] ?? [], $this->get_shortcut_fallback_icon('plus')),
             ],
             [
-                'label' => esc_html__('Favorite', 'spotify-elementor-sidebar-menu'),
+                'label' => !empty($settings['mobile_floating_favorite_label']) ? $settings['mobile_floating_favorite_label'] : esc_html__('Favorite', 'spotify-elementor-sidebar-menu'),
                 'url' => $settings['mobile_floating_favorite_url'] ?? ['url' => '#'],
-                'icon' => $this->get_shortcut_fallback_icon('liked'),
+                'icon' => $this->get_icon_markup($settings['mobile_floating_favorite_icon'] ?? [], $this->get_shortcut_fallback_icon('liked')),
             ],
         ];
 
