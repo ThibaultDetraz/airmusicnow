@@ -280,7 +280,7 @@ class SEMS_Create_Playlist_Widget extends \Elementor\Widget_Base {
                 'size_units' => ['px'],
                 'range' => ['px' => ['min' => 120, 'max' => 800]],
                 'selectors' => [
-                    '{{WRAPPER}} .sems-playlist-products' => 'max-height: {{SIZE}}{{UNIT}};',
+                    '{{WRAPPER}} .sems-playlist-products' => 'max-height: {{SIZE}}{{UNIT}}; overflow-y: auto; overflow-x: hidden;',
                 ],
             ]
         );

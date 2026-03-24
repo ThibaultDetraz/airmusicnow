@@ -67,6 +67,15 @@ class SEMS_Playlist_Grid_Widget extends \Elementor\Widget_Base {
             ]
         );
 
+        $this->add_control(
+            'download_all_label',
+            [
+                'label' => esc_html__('Download Button Label', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::TEXT,
+                'default' => esc_html__('Download All Tracks', 'spotify-elementor-sidebar-menu'),
+            ]
+        );
+
         $this->end_controls_section();
 
         $this->start_controls_section(
@@ -181,6 +190,28 @@ class SEMS_Playlist_Grid_Widget extends \Elementor\Widget_Base {
             ]
         );
 
+        $this->add_control(
+            'download_btn_bg_color',
+            [
+                'label' => esc_html__('Download Button Background', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .sems-playlist-download-all' => 'background: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'download_btn_text_color',
+            [
+                'label' => esc_html__('Download Button Text', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .sems-playlist-download-all' => 'color: {{VALUE}};',
+                ],
+            ]
+        );
+
         $this->end_controls_section();
     }
 
@@ -222,6 +253,27 @@ class SEMS_Playlist_Grid_Widget extends \Elementor\Widget_Base {
             $products_limit = 8;
         }
 
+        $download_button_label = !empty($settings['download_all_label']) ? $settings['download_all_label'] : esc_html__('Download All Tracks', 'spotify-elementor-sidebar-menu');
+
+        $customer_downloads_by_product = [];
+        if (is_user_logged_in() && function_exists('wc_get_customer_available_downloads')) {
+            $customer_downloads = wc_get_customer_available_downloads(get_current_user_id());
+            if (is_array($customer_downloads)) {
+                foreach ($customer_downloads as $download_item) {
+                    if (empty($download_item['product_id']) || empty($download_item['download_url'])) {
+                        continue;
+                    }
+
+                    $product_id = (int) $download_item['product_id'];
+                    if (!isset($customer_downloads_by_product[$product_id])) {
+                        $customer_downloads_by_product[$product_id] = [];
+                    }
+
+                    $customer_downloads_by_product[$product_id][] = (string) $download_item['download_url'];
+                }
+            }
+        }
+
         echo '<div class="sems-playlist-grid">';
         while ($playlists->have_posts()) {
             $playlists->the_post();
@@ -233,13 +285,37 @@ class SEMS_Playlist_Grid_Widget extends \Elementor\Widget_Base {
                 $product_ids = [];
             }
 
-            $product_ids = array_slice(array_map('intval', $product_ids), 0, $products_limit);
+            $all_product_ids = array_map('intval', $product_ids);
+            $product_ids = array_slice($all_product_ids, 0, $products_limit);
+
+            $download_urls = [];
+            foreach ($all_product_ids as $product_id) {
+                if (empty($customer_downloads_by_product[$product_id])) {
+                    continue;
+                }
+
+                foreach ($customer_downloads_by_product[$product_id] as $download_url) {
+                    $download_urls[] = $download_url;
+                }
+            }
+
+            $download_urls = array_values(array_unique($download_urls));
+            $download_container_id = 'sems-download-links-' . $this->get_id() . '-' . $playlist_id;
 
             echo '<article class="sems-playlist-card">';
             if (!empty($cover_url)) {
                 echo '<img class="sems-playlist-card__cover" src="' . esc_url($cover_url) . '" alt="' . esc_attr(get_the_title()) . '" />';
             } else {
                 echo '<div class="sems-playlist-card__cover sems-playlist-card__cover--empty"></div>';
+            }
+
+            if (!empty($download_urls)) {
+                echo '<button type="button" class="sems-playlist-download-all" data-links-id="' . esc_attr($download_container_id) . '">' . esc_html($download_button_label) . '</button>';
+                echo '<div id="' . esc_attr($download_container_id) . '" class="sems-playlist-download-links" hidden>';
+                foreach ($download_urls as $download_url) {
+                    echo '<a href="' . esc_url($download_url) . '" target="_blank" rel="noopener noreferrer"></a>';
+                }
+                echo '</div>';
             }
 
             echo '<h4 class="sems-playlist-card__title">' . esc_html(get_the_title()) . '</h4>';
@@ -261,5 +337,46 @@ class SEMS_Playlist_Grid_Widget extends \Elementor\Widget_Base {
         echo '</div>';
 
         wp_reset_postdata();
+
+        $this->render_download_script();
+    }
+
+    private function render_download_script(): void {
+        ?>
+        <script>
+            (function () {
+                var root = document.currentScript ? document.currentScript.previousElementSibling : null;
+                if (!root || !root.classList.contains('sems-playlist-grid')) {
+                    return;
+                }
+
+                var buttons = root.querySelectorAll('.sems-playlist-download-all');
+                buttons.forEach(function (button) {
+                    button.addEventListener('click', function () {
+                        var linksId = button.getAttribute('data-links-id');
+                        if (!linksId) {
+                            return;
+                        }
+
+                        var linksContainer = root.querySelector('#' + linksId);
+                        if (!linksContainer) {
+                            return;
+                        }
+
+                        var links = linksContainer.querySelectorAll('a[href]');
+                        if (!links.length) {
+                            return;
+                        }
+
+                        links.forEach(function (link, index) {
+                            window.setTimeout(function () {
+                                window.open(link.getAttribute('href'), '_blank');
+                            }, index * 180);
+                        });
+                    });
+                });
+            })();
+        </script>
+        <?php
     }
 }

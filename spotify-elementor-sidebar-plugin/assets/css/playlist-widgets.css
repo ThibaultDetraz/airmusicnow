@@ -83,8 +83,9 @@
 }
 
 .sems-playlist-products {
-    max-height: none;
-    overflow: visible;
+    max-height: 360px;
+    overflow-y: auto;
+    overflow-x: hidden;
     border: 1px solid #2e2e2e;
     border-radius: 10px;
     padding: 10px;
@@ -160,6 +161,25 @@
 
 .sems-playlist-card__cover--empty {
     background: #2b2b2b;
+}
+
+.sems-playlist-download-all {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+    width: 100%;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    background: #1db954;
+    color: #fff;
+    padding: 9px 12px;
+    cursor: pointer;
+}
+
+.sems-playlist-download-all:hover,
+.sems-playlist-download-all:focus-visible {
+    opacity: 0.92;
 }
 
 .sems-playlist-card__title {
