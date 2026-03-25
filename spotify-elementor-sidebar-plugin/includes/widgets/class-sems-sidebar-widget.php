@@ -1231,6 +1231,19 @@ class SEMS_Sidebar_Widget extends \Elementor\Widget_Base {
             ]
         );
 
+        $this->add_responsive_control(
+            'mobile_floating_bottom_offset',
+            [
+                'label' => esc_html__('Bottom Offset', 'spotify-elementor-sidebar-menu'),
+                'type' => \Elementor\Controls_Manager::SLIDER,
+                'size_units' => ['px'],
+                'range' => ['px' => ['min' => 0, 'max' => 120]],
+                'selectors' => [
+                    '{{WRAPPER}} .sems-mobile-floating-nav' => 'bottom: calc({{SIZE}}{{UNIT}} + env(safe-area-inset-bottom, 0px));',
+                ],
+            ]
+        );
+
         $this->add_control(
             'mobile_floating_item_color',
             [
