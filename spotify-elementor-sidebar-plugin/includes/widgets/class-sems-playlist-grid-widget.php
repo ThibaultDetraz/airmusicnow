@@ -224,7 +224,7 @@ class SEMS_Playlist_Grid_Widget extends \Elementor\Widget_Base {
         }
 
         $query_args = [
-            'post_type' => SEMS_Playlists::get_post_type(),
+            'post_type' => 'sems_playlist',
             'post_status' => 'publish',
             'posts_per_page' => $items_per_page,
             'orderby' => 'date',

@@ -25,9 +25,6 @@ final class SEMS_Plugin {
             return;
         }
 
-        require_once SEMS_PLUGIN_PATH . 'includes/class-sems-playlists.php';
-        SEMS_Playlists::init();
-
         add_action('elementor/frontend/after_register_styles', [$this, 'register_assets']);
         add_action('elementor/editor/before_enqueue_styles', [$this, 'register_assets']);
         add_action('elementor/widgets/register', [$this, 'register_widgets']);
