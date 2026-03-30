@@ -75,11 +75,9 @@ final class SEMS_Plugin {
         }
 
         require_once SEMS_PLUGIN_PATH . 'includes/widgets/class-sems-sidebar-widget.php';
-        require_once SEMS_PLUGIN_PATH . 'includes/widgets/class-sems-create-playlist-widget.php';
         require_once SEMS_PLUGIN_PATH . 'includes/widgets/class-sems-playlist-grid-widget.php';
 
         $widgets_manager->register(new SEMS_Sidebar_Widget());
-        $widgets_manager->register(new SEMS_Create_Playlist_Widget());
         $widgets_manager->register(new SEMS_Playlist_Grid_Widget());
         $this->widget_registered = true;
     }
@@ -90,18 +88,15 @@ final class SEMS_Plugin {
         }
 
         require_once SEMS_PLUGIN_PATH . 'includes/widgets/class-sems-sidebar-widget.php';
-        require_once SEMS_PLUGIN_PATH . 'includes/widgets/class-sems-create-playlist-widget.php';
         require_once SEMS_PLUGIN_PATH . 'includes/widgets/class-sems-playlist-grid-widget.php';
 
         $widgets_manager = \Elementor\Plugin::instance()->widgets_manager;
 
         if (method_exists($widgets_manager, 'register')) {
             $widgets_manager->register(new SEMS_Sidebar_Widget());
-            $widgets_manager->register(new SEMS_Create_Playlist_Widget());
             $widgets_manager->register(new SEMS_Playlist_Grid_Widget());
         } elseif (method_exists($widgets_manager, 'register_widget_type')) {
             $widgets_manager->register_widget_type(new SEMS_Sidebar_Widget());
-            $widgets_manager->register_widget_type(new SEMS_Create_Playlist_Widget());
             $widgets_manager->register_widget_type(new SEMS_Playlist_Grid_Widget());
         }
 
