@@ -61,6 +61,19 @@ class Admin_Monitor_Service {
                 ON retry_meta.post_id = p.ID AND retry_meta.meta_key = '_aim_retry_attempts'
             LEFT JOIN {$pm} error_meta
                 ON error_meta.post_id = p.ID AND error_meta.meta_key = '_aim_analysis_error'
+
+            LEFT JOIN {$pm} moods_meta
+                ON moods_meta.post_id = p.ID AND moods_meta.meta_key = '_aim_ai_moods'
+            LEFT JOIN {$pm} scene_meta
+                ON scene_meta.post_id = p.ID AND scene_meta.meta_key = '_aim_ai_scene_tags'
+            LEFT JOIN {$pm} instruments_meta
+                ON instruments_meta.post_id = p.ID AND instruments_meta.meta_key = '_aim_ai_instruments'
+            LEFT JOIN {$pm} energy_meta
+                ON energy_meta.post_id = p.ID AND energy_meta.meta_key = '_aim_ai_energy_label'
+            LEFT JOIN {$pm} tempo_meta
+                ON tempo_meta.post_id = p.ID AND tempo_meta.meta_key = '_aim_ai_tempo_label'
+            LEFT JOIN {$pm} summary_meta
+                ON summary_meta.post_id = p.ID AND summary_meta.meta_key = '_aim_ai_summary'
         ";
 
         $count_sql = "SELECT COUNT(DISTINCT p.ID) " . $base_sql . $where;
@@ -76,7 +89,15 @@ class Admin_Monitor_Service {
                 version_meta.meta_value as version,
                 updated_meta.meta_value as updated_at,
                 retry_meta.meta_value as retries,
-                error_meta.meta_value as error
+                error_meta.meta_value as error,
+
+                moods_meta.meta_value as moods,
+                scene_meta.meta_value as scene_tags,
+                instruments_meta.meta_value as instruments,
+                energy_meta.meta_value as energy_label,
+                tempo_meta.meta_value as tempo_label,
+                summary_meta.meta_value as summary
+
             " . $base_sql . $where . "
             ORDER BY {$orderby_sql} {$order_sql}
             LIMIT %d OFFSET %d
@@ -91,11 +112,27 @@ class Admin_Monitor_Service {
 
         foreach ($items as &$item) {
             $item['retries'] = (int) ($item['retries'] ?? 0);
+            $item['moods'] = self::decode_json_meta($item['moods'] ?? '');
+            $item['scene_tags'] = self::decode_json_meta($item['scene_tags'] ?? '');
+            $item['instruments'] = self::decode_json_meta($item['instruments'] ?? '');
         }
 
         return [
             'items'       => $items,
             'total_items' => $total_items,
         ];
+    }
+
+    protected static function decode_json_meta($value): array {
+        if (is_array($value)) {
+            return array_values($value);
+        }
+
+        if (!$value) {
+            return [];
+        }
+
+        $decoded = json_decode((string) $value, true);
+        return is_array($decoded) ? array_values($decoded) : [];
     }
 }

@@ -19,15 +19,16 @@ class Admin_List_Table extends \WP_List_Table {
 
     public function get_columns() {
         return [
-            'cb'         => '<input type="checkbox" />',
-            'product'    => 'Product',
-            'status'     => 'Status',
-            'model'      => 'Model',
-            'version'    => 'Version',
-            'updated_at' => 'Updated',
-            'retries'    => 'Retries',
-            'error'      => 'Last Error',
-            'actions'    => 'Actions',
+            'cb'            => '<input type="checkbox" />',
+            'product'       => 'Product',
+            'status'        => 'Status',
+            'analysis_data' => 'Analysis Data',
+            'model'         => 'Model',
+            'version'       => 'Version',
+            'updated_at'    => 'Updated',
+            'retries'       => 'Retries',
+            'error'         => 'Last Error',
+            'actions'       => 'Actions',
         ];
     }
 
@@ -139,5 +140,32 @@ class Admin_List_Table extends \WP_List_Table {
             'per_page'    => $per_page,
             'total_pages' => ceil($data['total_items'] / $per_page),
         ]);
+    }
+
+    public function column_analysis_data($item) {
+        $html = '';
+
+        if (!empty($item['energy_label']) || !empty($item['tempo_label'])) {
+            $html .= '<div><strong>Energy:</strong> ' . esc_html($item['energy_label'] ?: '-') . '</div>';
+            $html .= '<div><strong>Tempo:</strong> ' . esc_html($item['tempo_label'] ?: '-') . '</div>';
+        }
+
+        if (!empty($item['moods'])) {
+            $html .= '<div><strong>Moods:</strong> ' . esc_html(implode(', ', $item['moods'])) . '</div>';
+        }
+
+        if (!empty($item['scene_tags'])) {
+            $html .= '<div><strong>Scenes:</strong> ' . esc_html(implode(', ', $item['scene_tags'])) . '</div>';
+        }
+
+        if (!empty($item['instruments'])) {
+            $html .= '<div><strong>Instruments:</strong> ' . esc_html(implode(', ', $item['instruments'])) . '</div>';
+        }
+
+        if (!empty($item['summary'])) {
+            $html .= '<div style="margin-top:6px; max-width:360px; white-space:normal;"><strong>Summary:</strong> ' . esc_html($item['summary']) . '</div>';
+        }
+
+        return $html ?: '-';
     }
 }
