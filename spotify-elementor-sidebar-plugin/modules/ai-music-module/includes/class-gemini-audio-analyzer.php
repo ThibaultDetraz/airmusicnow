@@ -38,7 +38,15 @@ class Gemini_Audio_Analyzer {
         $duration    = (string) ($context['duration'] ?? '');
 
         $instruction = <<<TXT
-Analyze this music preview for stock music catalog tagging.
+You are an expert music tagging AI for stock music platforms.
+
+You MUST return a rich and detailed JSON.
+
+Rules:
+- moods must have at least 3 tags
+- scene_tags must describe real video use cases
+- instruments must list main instruments
+- summary must be meaningful
 
 Return ONLY valid JSON with this exact schema:
 {
@@ -89,13 +97,29 @@ TXT;
         }
 
         $text = $this->client->extract_text($response);
-        $parsed = json_decode($text, true);
-
+        $parsed = $this->extract_json($text);
+        Analysis_Logger::log(1, 'GEMINI RESPONSE', 'GEMINI RAW: ' . print_r($response, true));
+        Analysis_Logger::log(1, 'GEMINI TEXT', 'GEMINI TEXT: ' . $text);
         if (!is_array($parsed)) {
             return new \WP_Error('aim_invalid_audio_json', 'Gemini audio analyzer returned invalid JSON.');
         }
 
         return $this->normalize($parsed);
+    }
+
+    protected function extract_json(string $text): ?array {
+
+        // tìm block {...}
+        if (preg_match('/\{.*\}/s', $text, $matches)) {
+            $json = $matches[0];
+            $decoded = json_decode($json, true);
+
+            if (is_array($decoded)) {
+                return $decoded;
+            }
+        }
+
+        return null;
     }
 
     protected function normalize(array $data): array {
