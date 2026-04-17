@@ -12,6 +12,10 @@ class Admin_Settings_Page {
     const OPTION_KEY_RETRY_MAX = 'aim_retry_max_attempts';
     const OPTION_KEY_RETRY_DELAY = 'aim_retry_delay_minutes';
     const OPTION_KEY_BACKFILL_LIMIT = 'aim_backfill_default_limit';
+    const OPTION_KEY_PROVIDER = 'aim_provider';
+    const OPTION_KEY_GEMINI_API = 'aim_gemini_api_key';
+    const OPTION_KEY_GEMINI_MODEL_PROMPT = 'aim_gemini_model_prompt';
+    const OPTION_KEY_GEMINI_MODEL_AUDIO = 'aim_gemini_model_audio';
 
     public static function init(): void {
         add_action('admin_menu', [__CLASS__, 'register_menu']);
@@ -47,6 +51,20 @@ class Admin_Settings_Page {
             'sanitize_callback' => 'absint',
         ]);
 
+        register_setting(self::OPTION_GROUP, self::OPTION_KEY_PROVIDER, [
+            'sanitize_callback' => 'sanitize_text_field',
+        ]);
+
+        register_setting(self::OPTION_GROUP, self::OPTION_KEY_GEMINI_API);
+
+        register_setting(self::OPTION_GROUP, self::OPTION_KEY_GEMINI_MODEL_PROMPT, [
+            'sanitize_callback' => 'sanitize_text_field',
+        ]);
+
+        register_setting(self::OPTION_GROUP, self::OPTION_KEY_GEMINI_MODEL_AUDIO, [
+            'sanitize_callback' => 'sanitize_text_field',
+        ]);
+
         add_settings_section(
             'aim_main_section',
             'AI Music Analyzer Settings',
@@ -60,6 +78,10 @@ class Admin_Settings_Page {
         self::add_field(self::OPTION_KEY_RETRY_MAX, 'Retry Max Attempts', 'number', 3);
         self::add_field(self::OPTION_KEY_RETRY_DELAY, 'Retry Delay (minutes)', 'number', 10);
         self::add_field(self::OPTION_KEY_BACKFILL_LIMIT, 'Backfill Default Limit', 'number', 500);
+        self::add_field(self::OPTION_KEY_PROVIDER, 'AI Provider', 'text', 'gemini');
+        self::add_field(self::OPTION_KEY_GEMINI_API, 'Gemini API Key', 'password');
+        self::add_field(self::OPTION_KEY_GEMINI_MODEL_PROMPT, 'Gemini Prompt Model', 'text', 'gemini-3.1-flash-lite-preview');
+        self::add_field(self::OPTION_KEY_GEMINI_MODEL_AUDIO, 'Gemini Audio Model', 'text', 'gemini-3.1-flash-lite-preview');
     }
 
     protected static function add_field(string $key, string $label, string $type = 'text', $default = ''): void {
@@ -146,5 +168,20 @@ class Admin_Settings_Page {
 
     public static function get_retry_delay_minutes(): int {
         return max(1, (int) get_option(self::OPTION_KEY_RETRY_DELAY, 10));
+    }
+    public static function get_provider(): string {
+        return (string) get_option(self::OPTION_KEY_PROVIDER, 'gemini');
+    }
+
+    public static function get_gemini_api_key(): string {
+        return (string) get_option(self::OPTION_KEY_GEMINI_API, '');
+    }
+
+    public static function get_gemini_model_prompt(): string {
+        return (string) get_option(self::OPTION_KEY_GEMINI_MODEL_PROMPT, 'gemini-3.1-flash-lite-preview');
+    }
+
+    public static function get_gemini_model_audio(): string {
+        return (string) get_option(self::OPTION_KEY_GEMINI_MODEL_AUDIO, 'gemini-3.1-flash-lite-preview');
     }
 }

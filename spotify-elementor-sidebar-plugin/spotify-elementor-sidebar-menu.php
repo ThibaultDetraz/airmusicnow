@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Ultimate Index Addon-ons
  * Description: Adds a Spotify-style sidebar menu widget for Elementor.
- * Version: 1.2.4
+ * Version: 1.2.5
  * Author: Copilot
  * Requires at least: 6.0
  * Requires PHP: 7.4
@@ -30,7 +30,7 @@ add_action('plugins_loaded', function () {
     \YourPlugin\AI_Music\Module_Loader::bootstrap(
         plugin_dir_path(__FILE__) . 'modules/ai-music-module/',
         plugin_dir_url(__FILE__) . 'modules/ai-music-module/',
-        '1.0.0'
+        '1.0.1'
     );
 });
 

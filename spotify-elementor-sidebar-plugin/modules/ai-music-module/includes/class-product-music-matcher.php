@@ -6,7 +6,13 @@ if (!defined('ABSPATH')) exit;
 class Product_Music_Matcher {
 
     public function find_matches(string $video_prompt, int $limit = 6) {
-        $intent_analyzer = new Prompt_Intent_Analyzer();
+        $provider = Admin_Settings_Page::get_provider();
+
+        if ($provider === 'gemini') {
+            $intent_analyzer = new Gemini_Prompt_Analyzer();
+        } else {
+            $intent_analyzer = new Prompt_Intent_Analyzer();
+        }
         $intent = $intent_analyzer->analyze($video_prompt);
 
         if (is_wp_error($intent)) {

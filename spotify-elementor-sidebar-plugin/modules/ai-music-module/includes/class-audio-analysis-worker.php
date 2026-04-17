@@ -50,7 +50,13 @@ class Audio_Analysis_Worker {
                 $preview_path = $preview;
             }
 
-            $analyzer = new OpenAI_Audio_Analyzer();
+            $provider = Admin_Settings_Page::get_provider();
+
+            if ($provider === 'gemini') {
+                $analyzer = new Gemini_Audio_Analyzer();
+            } else {
+                $analyzer = new OpenAI_Audio_Analyzer();
+            }
 
             $result = $analyzer->analyze_audio_file($preview_path, [
                 'title'       => $product->get_name(),
