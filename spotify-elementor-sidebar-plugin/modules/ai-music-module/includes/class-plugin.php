@@ -18,6 +18,8 @@ class Plugin {
         Recommendation_REST_Controller::init();
         Widget_REST_Controller::init();
         Widget_Assets::init();
+        Elementor_Widget_Registry::init();
+        Widget_Shortcode::init();
     }
 
     public static function activate(): void {
