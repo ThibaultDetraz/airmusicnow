@@ -1,24 +1,42 @@
 document.addEventListener('click', async function (e) {
-  const button = e.target.closest('.aim-widget-submit');
-  if (!button) return;
+  const submitButton = e.target.closest('.aim-widget-submit');
+  if (submitButton) {
+    const widget = submitButton.closest('.aim-widget');
+    if (!widget) return;
+    await runSearch(widget, 1);
+    return;
+  }
 
-  const widget = button.closest('.aim-widget');
-  if (!widget) return;
+  const pageButton = e.target.closest('.aim-widget-page-btn');
+  if (pageButton) {
+    const widget = pageButton.closest('.aim-widget');
+    if (!widget) return;
 
-  const textarea = widget.querySelector('.aim-widget-prompt');
-  const results = widget.querySelector('.aim-widget-results');
-  const status = widget.querySelector('.aim-widget-status');
-  const limit = parseInt(widget.getAttribute('data-limit') || '6', 10);
+    const page = parseInt(pageButton.getAttribute('data-page') || '1', 10);
+    await runSearch(widget, page);
+  }
+});
 
-  const prompt = textarea ? textarea.value.trim() : '';
+async function runSearch(widget, page) {
+  const textarea   = widget.querySelector('.aim-widget-prompt');
+  const results    = widget.querySelector('.aim-widget-results');
+  const status     = widget.querySelector('.aim-widget-status');
+  const pagination = widget.querySelector('.aim-widget-pagination');
+  const submitBtn  = widget.querySelector('.aim-widget-submit');
+
+  const perPage   = parseInt(widget.getAttribute('data-per-page') || '6', 10);
+  const showPrice = widget.getAttribute('data-show-price') === '1';
+  const prompt    = textarea ? textarea.value.trim() : '';
+
   if (!prompt) {
     status.textContent = 'Please enter a video prompt.';
     return;
   }
 
-  button.disabled = true;
+  submitBtn.disabled = true;
   status.textContent = 'Analyzing prompt and finding matching tracks...';
   results.innerHTML = '';
+  pagination.innerHTML = '';
 
   try {
     const response = await fetch(AIMWidget.endpoint, {
@@ -29,7 +47,8 @@ document.addEventListener('click', async function (e) {
       },
       body: JSON.stringify({
         prompt: prompt,
-        limit: limit
+        page: page,
+        per_page: perPage
       })
     });
 
@@ -39,46 +58,85 @@ document.addEventListener('click', async function (e) {
       throw new Error(data.message || 'Request failed');
     }
 
-    const tracks = (data && data.tracks) ? data.tracks : [];
+    const tracks = data?.tracks || [];
+    const pager  = data?.pagination || null;
+
     if (!tracks.length) {
       status.textContent = 'No matching tracks found.';
       return;
     }
 
-    status.textContent = 'Found ' + tracks.length + ' matching tracks.';
+    status.textContent = `Found ${pager?.total_items || tracks.length} matching tracks. Showing page ${pager?.page || 1}.`;
 
-    const html = tracks.map(track => {
+    results.innerHTML = tracks.map(track => {
       const reasons = (track.match_reasons || []).map(reason => `<li>${escapeHtml(reason)}</li>`).join('');
-      const moods = (track.moods || []).map(tag => `<span class="aim-tag">${escapeHtml(tag)}</span>`).join('');
-      const scenes = (track.scene_tags || []).map(tag => `<span class="aim-tag">${escapeHtml(tag)}</span>`).join('');
+      const moods = renderTags(track.moods || []);
+      const scenes = renderTags(track.scene_tags || []);
+      const instruments = renderTags(track.instruments || []);
 
       return `
         <div class="aim-track-card">
           ${track.image ? `<img class="aim-track-thumb" src="${track.image}" alt="${escapeHtml(track.title || '')}">` : ''}
           <div class="aim-track-body">
-            <h4 class="aim-track-title"><a href="${track.permalink}" target="_blank" rel="noopener">${escapeHtml(track.title || '')}</a></h4>
+            <h4 class="aim-track-title">
+              <a href="${track.permalink}" target="_blank" rel="noopener">${escapeHtml(track.title || '')}</a>
+            </h4>
+
             <div class="aim-track-meta">
               <span><strong>Score:</strong> ${track.score}</span>
               <span><strong>Energy:</strong> ${escapeHtml(track.energy_label || '-')}</span>
               <span><strong>Tempo:</strong> ${escapeHtml(track.tempo_label || '-')}</span>
             </div>
+
             ${track.summary ? `<p class="aim-track-summary">${escapeHtml(track.summary)}</p>` : ''}
-            <div class="aim-track-tags">${moods}${scenes}</div>
+
+            ${moods ? `<div class="aim-track-section"><strong>Moods:</strong> ${moods}</div>` : ''}
+            ${scenes ? `<div class="aim-track-section"><strong>Scenes:</strong> ${scenes}</div>` : ''}
+            ${instruments ? `<div class="aim-track-section"><strong>Instruments:</strong> ${instruments}</div>` : ''}
+
             ${reasons ? `<ul class="aim-track-reasons">${reasons}</ul>` : ''}
-            ${track.price_html ? `<div class="aim-track-price">${track.price_html}</div>` : ''}
+
+            ${showPrice && track.price_html ? `<div class="aim-track-price">${track.price_html}</div>` : ''}
           </div>
         </div>
       `;
     }).join('');
 
-    results.innerHTML = html;
+    pagination.innerHTML = renderPagination(pager);
 
   } catch (err) {
     status.textContent = err.message || 'Something went wrong.';
   } finally {
-    button.disabled = false;
+    submitBtn.disabled = false;
   }
-});
+}
+
+function renderTags(tags) {
+  if (!tags.length) return '';
+  return tags.map(tag => `<span class="aim-tag">${escapeHtml(tag)}</span>`).join('');
+}
+
+function renderPagination(pager) {
+  if (!pager || !pager.total_pages || pager.total_pages <= 1) return '';
+
+  let html = `<div class="aim-pagination-wrap">`;
+
+  if (pager.has_prev) {
+    html += `<button type="button" class="aim-widget-page-btn" data-page="${pager.page - 1}">Prev</button>`;
+  }
+
+  for (let i = 1; i <= pager.total_pages; i++) {
+    const activeClass = i === pager.page ? ' is-active' : '';
+    html += `<button type="button" class="aim-widget-page-btn${activeClass}" data-page="${i}">${i}</button>`;
+  }
+
+  if (pager.has_next) {
+    html += `<button type="button" class="aim-widget-page-btn" data-page="${pager.page + 1}">Next</button>`;
+  }
+
+  html += `</div>`;
+  return html;
+}
 
 function escapeHtml(str) {
   return String(str)
