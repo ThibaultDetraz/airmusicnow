@@ -1,5 +1,8 @@
 # Changelog
 
+## Unreleased
+- Added Elementor style controls for the `AI Music Finder` submit button, including alignment, typography, colors, border, radius, padding, and width.
+
 ## v1.0.0 - 2026-03-03
 - Added initial Elementor plugin scaffold.
 - Added `Spotify Sidebar Menu` widget implementation.
