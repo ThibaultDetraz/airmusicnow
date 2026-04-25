@@ -92,10 +92,10 @@ async function runSearch(widget, page) {
             ${track.preview_url ? `
               <button 
                 type="button" 
-                class="srp_audio_trigger audio-track" 
+                class="aim-play-btn" 
                 data-audio="${escapeHtml(track.preview_url)}" 
                 data-title="${escapeHtml(track.title || '')}">
-                <i class="sricon-play" aria-label="Play Track"></i> Play
+                ▶ Play
               </button>
             ` : ''}
             ${moods ? `<div class="aim-track-section"><strong>Moods:</strong> ${moods}</div>` : ''}
