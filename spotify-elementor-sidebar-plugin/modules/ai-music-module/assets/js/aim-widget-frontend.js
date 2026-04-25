@@ -89,7 +89,15 @@ async function runSearch(widget, page) {
             </div>
 
             ${track.summary ? `<p class="aim-track-summary">${escapeHtml(track.summary)}</p>` : ''}
-
+            ${track.preview_url ? `
+              <button 
+                type="button" 
+                class="aim-play-btn" 
+                data-audio="${escapeHtml(track.preview_url)}" 
+                data-title="${escapeHtml(track.title || '')}">
+                ▶ Play
+              </button>
+            ` : ''}
             ${moods ? `<div class="aim-track-section"><strong>Moods:</strong> ${moods}</div>` : ''}
             ${scenes ? `<div class="aim-track-section"><strong>Scenes:</strong> ${scenes}</div>` : ''}
             ${instruments ? `<div class="aim-track-section"><strong>Instruments:</strong> ${instruments}</div>` : ''}
@@ -146,3 +154,24 @@ function escapeHtml(str) {
     .replaceAll('"', '&quot;')
     .replaceAll("'", '&#039;');
 }
+document.addEventListener('click', function(e) {
+  const btn = e.target.closest('.aim-play-btn');
+  if (!btn) return;
+
+  const widget = btn.closest('.aim-widget');
+  let player = widget.querySelector('.aim-global-audio-player');
+
+  if (!player) {
+    player = document.createElement('audio');
+    player.className = 'aim-global-audio-player';
+    player.controls = true;
+    player.style.width = '100%';
+    player.style.margin = '16px 0';
+    widget.querySelector('.aim-widget-results').before(player);
+  }
+
+  player.src = btn.getAttribute('data-audio');
+  player.play().catch(() => {
+    player.controls = true;
+  });
+});

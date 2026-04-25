@@ -35,7 +35,7 @@ class Product_Music_Matcher {
             if ($status !== 'done') continue;
 
             $score_data = $this->score_product($product, $intent);
-            if ($score_data['score'] <= 0) continue;
+            //if ($score_data['score'] <= 0) continue;
 
             $scored[] = [
                 'product' => $product,
@@ -67,6 +67,7 @@ class Product_Music_Matcher {
                 'instruments'   => $this->decode_json_meta($product->get_meta('_aim_ai_instruments', true)),
                 'energy_label'  => (string) $product->get_meta('_aim_ai_energy_label', true),
                 'tempo_label'   => (string) $product->get_meta('_aim_ai_tempo_label', true),
+                'preview_url'   => Product_Audio_Helper::get_audio_url($product),
             ];
         }
 
@@ -84,22 +85,43 @@ class Product_Music_Matcher {
         $scene_tags = $this->decode_json_meta($product->get_meta('_aim_ai_scene_tags', true));
         $instruments = $this->decode_json_meta($product->get_meta('_aim_ai_instruments', true));
         $structure_tags = $this->decode_json_meta($product->get_meta('_aim_ai_structure_tags', true));
+
         $energy = (string) $product->get_meta('_aim_ai_energy_label', true);
-        $tempo = (string) $product->get_meta('_aim_ai_tempo_label', true);
+        $tempo  = (string) $product->get_meta('_aim_ai_tempo_label', true);
+        $summary = strtolower((string) $product->get_meta('_aim_ai_summary', true) . ' ' . $product->get_name());
 
-        $score += $this->score_overlap($intent['moods'], $moods, 4, $reasons, 'Mood match');
-        $score += $this->score_overlap($intent['scene_tags'], $scene_tags, 5, $reasons, 'Scene fit');
-        $score += $this->score_overlap($intent['instruments'], $instruments, 2, $reasons, 'Instrument fit');
-        $score += $this->score_overlap($intent['structure_tags'], $structure_tags, 3, $reasons, 'Structure fit');
+        $score += $this->soft_score_tags($intent['moods'] ?? [], $moods, 6, $reasons, 'Mood match');
+        $score += $this->soft_score_tags($intent['scene_tags'] ?? [], $scene_tags, 7, $reasons, 'Scene fit');
+        $score += $this->soft_score_tags($intent['instruments'] ?? [], $instruments, 3, $reasons, 'Instrument fit');
+        $score += $this->soft_score_tags($intent['structure_tags'] ?? [], $structure_tags, 3, $reasons, 'Structure fit');
 
-        if (!empty($intent['energy_label']) && $intent['energy_label'] === $energy) {
-            $score += 4;
-            $reasons[] = 'Energy matches';
+        foreach (array_merge(
+            $intent['moods'] ?? [],
+            $intent['scene_tags'] ?? [],
+            $intent['instruments'] ?? []
+        ) as $keyword) {
+            $keyword = strtolower(trim($keyword));
+            if ($keyword && strpos($summary, $keyword) !== false) {
+                $score += 1.5;
+            }
         }
 
-        if (!empty($intent['tempo_label']) && $intent['tempo_label'] === $tempo) {
-            $score += 3;
-            $reasons[] = 'Tempo matches';
+        if (!empty($intent['energy_label']) && $energy) {
+            if ($intent['energy_label'] === $energy) {
+                $score += 5;
+                $reasons[] = 'Energy matches';
+            } else {
+                $score += 1;
+            }
+        }
+
+        if (!empty($intent['tempo_label']) && $tempo) {
+            if ($intent['tempo_label'] === $tempo) {
+                $score += 4;
+                $reasons[] = 'Tempo matches';
+            } else {
+                $score += 1;
+            }
         }
 
         $confidence = (float) $product->get_meta('_aim_ai_confidence', true);
@@ -108,9 +130,44 @@ class Product_Music_Matcher {
         }
 
         return [
-            'score' => round($score, 2),
+            'score' => round(max(0, $score), 2),
             'reasons' => array_values(array_unique($reasons)),
         ];
+    }
+
+    protected function soft_score_tags(array $wanted, array $actual, float $weight, array &$reasons, string $label): float {
+        if (empty($wanted) || empty($actual)) {
+            return 0;
+        }
+
+        $score = 0;
+        $hits = [];
+
+        foreach ($wanted as $w) {
+            $w = strtolower(trim((string) $w));
+            if (!$w) continue;
+
+            foreach ($actual as $a) {
+                $a = strtolower(trim((string) $a));
+                if (!$a) continue;
+
+                if ($w === $a) {
+                    $score += $weight;
+                    $hits[] = $a;
+                } elseif (strpos($a, $w) !== false || strpos($w, $a) !== false) {
+                    $score += $weight * 0.55;
+                    $hits[] = $a;
+                } elseif (similar_text($w, $a) >= 5) {
+                    $score += $weight * 0.25;
+                }
+            }
+        }
+
+        if (!empty($hits)) {
+            $reasons[] = $label . ': ' . implode(', ', array_slice(array_unique($hits), 0, 3));
+        }
+
+        return $score;
     }
 
     protected function score_overlap(array $wanted, array $actual, int $weight, array &$reasons, string $reason_label): float {

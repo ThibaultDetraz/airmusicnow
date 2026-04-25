@@ -100,3 +100,12 @@
   font-weight: 700;
   border-color: #222;
 }
+.aim-play-btn {
+  margin-top: 10px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid #ddd;
+  cursor: pointer;
+  background: #fff;
+  font-weight: 600;
+}
