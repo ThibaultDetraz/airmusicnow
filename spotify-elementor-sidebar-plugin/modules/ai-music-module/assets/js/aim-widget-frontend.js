@@ -182,36 +182,86 @@ function aimPlayWithSonaarSticky(audioUrl, title, artist) {
     return;
   }
 
+  if (!audioUrl) {
+    console.warn('Missing audio URL');
+    return;
+  }
+
   var player = IRON.sonaar.player;
+  var safeId = 'aim_' + btoa(unescape(encodeURIComponent(audioUrl))).replace(/=+$/,'').slice(0, 24);
 
-  player.list = {
-    playlist_name: title || '',
-    type: 'audio',
-    tracks: [{
-      mp3: audioUrl,
-      track_title: title || '',
-      album_title: title || '',
-      track_artist: artist || '',
-      poster: '',
-      sourcePostID: '',
-      track_pos: 0,
-      id: '',
-      has_lyric: false,
-      song_store_list: [],
-      album_store_list: [],
-      optional_storelist_cta: []
-    }]
-  };
-
+  player.selectedPlayer = null;
+  player.playlistID = 'aim_custom_playlist';
+  player.categoryID = '';
   player.currentTrack = 0;
   player.classes.emptyPlayer = false;
   player.classes.enable = true;
+  player.classes.waveEnable = false;
   player.minimize = false;
 
-  jQuery('#sonaar-player').show().addClass('enable');
+  player.list = {
+    playlist_name: 'AIM Preview',
+    type: 'audio',
+    random_order: [0],
+    tracks: [{
+      id: safeId,
+      track_id: safeId,
+      sourcePostID: safeId,
+      track_pos: 0,
+      track_index: 0,
 
+      mp3: audioUrl,
+      track_title: title || 'Preview',
+      album_title: title || 'Preview',
+      track_artist: artist || '',
+      artist: artist || '',
+      poster: '',
+
+      peakFile: false,
+      peak_allow_frontend: false,
+      isPreview: true,
+      is_preview: true,
+      has_lyric: false,
+      hasCompleted: false,
+
+      song_store_list: [],
+      album_store_list: [],
+      optional_storelist_cta: [],
+      description: '',
+      podcast_calltoaction: []
+    }]
+  };
+
+  jQuery('#sonaar-player')
+    .show()
+    .addClass('enable')
+    .css({
+      display: 'block',
+      bottom: '0px'
+    });
+
+  // Set audio through Sonaar state, but avoid accidental seek before metadata.
   player.handleTrackChange();
-  player.playAudio();
+
+  var audio = document.getElementById('sonaar-audio');
+  if (!audio) return;
+
+  audio.addEventListener('loadedmetadata', function onceLoaded() {
+    audio.removeEventListener('loadedmetadata', onceLoaded);
+
+    if (Number.isFinite(audio.duration)) {
+      audio.currentTime = 0;
+    }
+
+    player.playAudio();
+  });
+
+  // Fallback nếu metadata đã có sẵn
+  setTimeout(function () {
+    if (audio.paused) {
+      player.playAudio();
+    }
+  }, 300);
 }
 
 function forcePlayerStickyBottom() {
