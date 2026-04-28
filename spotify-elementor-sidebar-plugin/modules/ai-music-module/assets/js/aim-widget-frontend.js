@@ -95,6 +95,7 @@ async function runSearch(widget, page) {
                 class="aim-play-btn" 
                 data-audio="${escapeHtml(track.preview_url)}" 
                 data-title="${escapeHtml(track.title || '')}">
+                data-artist="Artist name"
                 ▶ Play
               </button>
             ` : ''}
@@ -175,39 +176,52 @@ function escapeHtml(str) {
 //     player.controls = true;
 //   });
 // });
+function aimPlayWithSonaarSticky(audioUrl, title, artist) {
+  if (!window.IRON || !IRON.sonaar || !IRON.sonaar.player) {
+    console.warn('Sonaar sticky player chưa sẵn sàng');
+    return;
+  }
+
+  var player = IRON.sonaar.player;
+
+  player.list = {
+    playlist_name: title || '',
+    type: 'audio',
+    tracks: [{
+      mp3: audioUrl,
+      track_title: title || '',
+      album_title: title || '',
+      track_artist: artist || '',
+      poster: '',
+      sourcePostID: '',
+      track_pos: 0,
+      id: '',
+      has_lyric: false,
+      song_store_list: [],
+      album_store_list: [],
+      optional_storelist_cta: []
+    }]
+  };
+
+  player.currentTrack = 0;
+  player.classes.emptyPlayer = false;
+  player.classes.enable = true;
+  player.minimize = false;
+
+  jQuery('#sonaar-player').show().addClass('enable');
+
+  player.handleTrackChange();
+  player.playAudio();
+}
+
 jQuery(document).on('click', '.aim-play-btn', function(e) {
   e.preventDefault();
 
   var $btn = jQuery(this);
-  var audioUrl = $btn.data('audio');
-  var title = $btn.data('title') || '';
-  var artist = $btn.data('artist') || '';
 
-  var $player = jQuery('#sonaar-player');
-  var audio = document.getElementById('sonaar-audio');
-
-  if (!audio || !$player.length || !audioUrl) {
-    console.warn('Missing sticky player or audio URL');
-    return;
-  }
-
-  $player.show().addClass('enable');
-
-  if (audio.src !== audioUrl) {
-    audio.src = audioUrl;
-    audio.load();
-
-    $player.attr('data-audiopath', audioUrl);
-    $player.attr('data-tracktitle', title);
-    $player.attr('data-trackartist', artist);
-
-    $player.find('.track-name').text(title);
-    $player.find('.track-album').text(title || artist);
-  }
-
-  audio.play();
-
-  $player.find('.play')
-    .removeClass('sricon-play')
-    .addClass('sricon-pause');
+  aimPlayWithSonaarSticky(
+    $btn.data('audio'),
+    $btn.data('title'),
+    $btn.data('artist')
+  );
 });
