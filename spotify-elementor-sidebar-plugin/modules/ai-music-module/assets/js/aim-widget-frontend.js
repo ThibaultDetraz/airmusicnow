@@ -94,8 +94,8 @@ async function runSearch(widget, page) {
                 type="button" 
                 class="aim-play-btn" 
                 data-audio="${escapeHtml(track.preview_url)}" 
-                data-title="${escapeHtml(track.title || '')}">
-                data-artist="Artist name"
+                data-title="${escapeHtml(track.title || '')}" data-artist="Artist name">
+              
                 ▶ Play
               </button>
             ` : ''}
@@ -214,11 +214,19 @@ function aimPlayWithSonaarSticky(audioUrl, title, artist) {
   player.playAudio();
 }
 
+function forcePlayerStickyBottom() {
+  const el = document.getElementById('sonaar-player');
+  if (!el) return;
+
+  el.style.display = 'block';
+  el.style.bottom = '0px';
+}
+
 jQuery(document).on('click', '.aim-play-btn', function(e) {
   e.preventDefault();
 
   var $btn = jQuery(this);
-
+  setTimeout(forcePlayerStickyBottom, 100);
   aimPlayWithSonaarSticky(
     $btn.data('audio'),
     $btn.data('title'),
