@@ -154,24 +154,60 @@ function escapeHtml(str) {
     .replaceAll('"', '&quot;')
     .replaceAll("'", '&#039;');
 }
-document.addEventListener('click', function(e) {
-  const btn = e.target.closest('.aim-play-btn');
-  if (!btn) return;
+// document.addEventListener('click', function(e) {
+//   const btn = e.target.closest('.aim-play-btn');
+//   if (!btn) return;
 
-  const widget = btn.closest('.aim-widget');
-  let player = widget.querySelector('.aim-global-audio-player');
+//   const widget = btn.closest('.aim-widget');
+//   let player = widget.querySelector('.aim-global-audio-player');
 
-  if (!player) {
-    player = document.createElement('audio');
-    player.className = 'aim-global-audio-player';
-    player.controls = true;
-    player.style.width = '100%';
-    player.style.margin = '16px 0';
-    widget.querySelector('.aim-widget-results').before(player);
+//   if (!player) {
+//     player = document.createElement('audio');
+//     player.className = 'aim-global-audio-player';
+//     player.controls = true;
+//     player.style.width = '100%';
+//     player.style.margin = '16px 0';
+//     widget.querySelector('.aim-widget-results').before(player);
+//   }
+
+//   player.src = btn.getAttribute('data-audio');
+//   player.play().catch(() => {
+//     player.controls = true;
+//   });
+// });
+jQuery(document).on('click', '.aim-play-btn', function(e) {
+  e.preventDefault();
+
+  var $btn = jQuery(this);
+  var audioUrl = $btn.data('audio');
+  var title = $btn.data('title') || '';
+  var artist = $btn.data('artist') || '';
+
+  var $player = jQuery('#sonaar-player');
+  var audio = document.getElementById('sonaar-audio');
+
+  if (!audio || !$player.length || !audioUrl) {
+    console.warn('Missing sticky player or audio URL');
+    return;
   }
 
-  player.src = btn.getAttribute('data-audio');
-  player.play().catch(() => {
-    player.controls = true;
-  });
+  $player.show().addClass('enable');
+
+  if (audio.src !== audioUrl) {
+    audio.src = audioUrl;
+    audio.load();
+
+    $player.attr('data-audiopath', audioUrl);
+    $player.attr('data-tracktitle', title);
+    $player.attr('data-trackartist', artist);
+
+    $player.find('.track-name').text(title);
+    $player.find('.track-album').text(title || artist);
+  }
+
+  audio.play();
+
+  $player.find('.play')
+    .removeClass('sricon-play')
+    .addClass('sricon-pause');
 });
