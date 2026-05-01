@@ -75,7 +75,7 @@ async function runSearch(widget, page) {
       const instruments = renderTags(track.instruments || []);
 
       return `
-        <div class="aim-track-card">
+        <div class="aim-track-card sr-playlist-item">
           ${track.image ? `<img class="aim-track-thumb" src="${track.image}" alt="${escapeHtml(track.title || '')}">` : ''}
           <div class="aim-track-body">
             <h4 class="aim-track-title">
@@ -92,11 +92,11 @@ async function runSearch(widget, page) {
             ${track.preview_url ? `
               <button 
                 type="button" 
-                class="aim-play-btn" 
+                class="aim-play-btn iron-audioplayer" 
                 data-audio="${escapeHtml(track.preview_url)}" 
                 data-title="${escapeHtml(track.title || '')}" data-artist="Artist name">
               
-                ▶ Play
+                <i class="sricon-play" aria-label="Play Track"></i> Play
               </button>
             ` : ''}
             ${moods ? `<div class="aim-track-section"><strong>Moods:</strong> ${moods}</div>` : ''}
@@ -276,6 +276,23 @@ jQuery(document).on('click', '.aim-play-btn', function(e) {
   e.preventDefault();
 
   var $btn = jQuery(this);
+  var $card = $btn.closest('.aim-track-card');
+
+  // Nếu đang là card current → toggle OFF
+  if ($card.hasClass('current')) {
+    $card.removeClass('current');
+    var srp_player = IRON.sonaar.player;
+    // optional: dừng nhạc
+    if (typeof srp_player !== 'undefined' && srp_player.pause) {
+      srp_player.pause();
+    }
+
+    return;
+  }
+
+  // Nếu click card khác → clear tất cả rồi set current mới
+  jQuery('.aim-track-card').removeClass('current');
+  $card.addClass('current');
   setTimeout(forcePlayerStickyBottom, 100);
   aimPlayWithSonaarSticky(
     $btn.data('audio'),

@@ -296,7 +296,7 @@ class Elementor_Music_Finder_Widget extends \Elementor\Widget_Base {
             </div>
 
             <div class="aim-widget-status"></div>
-            <div class="aim-widget-results"></div>
+            <div class="aim-widget-results audio-playing"></div>
             <div class="aim-widget-pagination"></div>
         </div>
         <?php
