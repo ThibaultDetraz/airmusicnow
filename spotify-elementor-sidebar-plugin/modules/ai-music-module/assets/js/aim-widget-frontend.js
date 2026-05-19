@@ -94,7 +94,9 @@ async function runSearch(widget, page) {
                 type="button" 
                 class="aim-play-btn iron-audioplayer" 
                 data-audio="${escapeHtml(track.preview_url)}" 
-                data-title="${escapeHtml(track.title || '')}" data-artist="Artist name">
+                data-productid="${escapeHtml(track.id)}" 
+                data-producturl="${escapeHtml(track.permalink)}" 
+                data-title="${escapeHtml(track.title || '')}" data-artist="Artist name" data-image="${escapeHtml(track.image || '')}">
               
                 <i class="sricon-play" aria-label="Play Track"></i> Play
               </button>
@@ -176,7 +178,7 @@ function escapeHtml(str) {
 //     player.controls = true;
 //   });
 // });
-function aimPlayWithSonaarSticky(audioUrl, title, artist) {
+function aimPlayWithSonaarSticky(audioUrl, title, artist, image, id, permalink) {
   if (!window.IRON || !IRON.sonaar || !IRON.sonaar.player) {
     console.warn('Sonaar sticky player chưa sẵn sàng');
     return;
@@ -215,7 +217,7 @@ function aimPlayWithSonaarSticky(audioUrl, title, artist) {
       album_title: title || 'Preview',
       track_artist: artist || '',
       artist: artist || '',
-      poster: '',
+      poster: image || '',
 
       peakFile: false,
       peak_allow_frontend: false,
@@ -225,7 +227,14 @@ function aimPlayWithSonaarSticky(audioUrl, title, artist) {
       hasCompleted: false,
 
       song_store_list: [],
-      album_store_list: [],
+      album_store_list: [
+        {
+          "store-icon": "fas fa-cart-plus",
+          "store-link": permalink,
+          "store-name": "Add to cart",
+          "product-id": id
+        }
+      ],
       optional_storelist_cta: [],
       description: '',
       podcast_calltoaction: []
@@ -297,6 +306,9 @@ jQuery(document).on('click', '.aim-play-btn', function(e) {
   aimPlayWithSonaarSticky(
     $btn.data('audio'),
     $btn.data('title'),
-    $btn.data('artist')
+    $btn.data('artist'),
+    $btn.data('image'),
+    $btn.data('productid'),
+    $btn.data('producturl'),
   );
 });
